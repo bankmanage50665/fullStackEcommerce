@@ -114,51 +114,52 @@ const products = [
 ];
 
 export default function Products() {
-  const { items, addToCart } = useContext(CartContaxt);
+  const { addToCart } = useContext(CartContaxt);
 
-
-  function handleAddToCart(items) {
-    addToCart(items);
+  function handleAddToCart(product) {
+    addToCart(product);
   }
 
   return (
     <>
-      <ul className="m-4">
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4">
         {products.map((product) => (
           <li
             key={product.id}
-            className="m-4 overflow-hidden bg-stone-200 rounded-md shadow-xl"
+            className="flex flex-col rounded-md shadow-md bg-white overflow-hidden"
           >
-            <Carousel>
+            <Carousel
+              autoplay
+              infiniteLoop
+              showStatus={false}
+              showThumbs={false}
+            >
               {product.image.map((img) => (
-                <img src={img} className="w-full object-cover " />
+                <img
+                  src={img}
+                  className="w-full object-cover h-48 sm:h-64 lg:h-80"
+                  alt={product.name}
+                />
               ))}
             </Carousel>
-            <div className="p-3">
-              <h2 className="font-semibold">{product.name}</h2>
-              <p>{product.description}</p>
-              <div className="flex text-center w-full">
+            <div className="flex flex-col p-4">
+              <h2 className="text-lg font-semibold">{product.name}</h2>
+              <p className="text-sm mb-2">
+                {product.description.substring(0, 100)}...
+              </p>
+              <div className="flex items-center justify-between mt-auto">
                 <Link
                   to={`${product.id}`}
-                  className="cursor-pointer w-full m-[5px]  bg-yellow-400 p-1 rounded-md "
+                  className="text-blue-500 underline hover:text-blue-700"
                 >
                   View Product
                 </Link>
-              </div>
-
-              <button
-                onClick={() => handleAddToCart(product)}
-                className="cursor-pointer w-full m-[5px] bg-yellow-400 p-1 rounded-md "
-              >
-                Add to cart
-              </button>
-              <div className="flex text-center w-full">
-                <Link
-                  to={`${product.id}/edit`}
-                  className="cursor-pointer w-full m-[5px]  bg-yellow-400 p-1 rounded-md "
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  className="px-4 py-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 focus:outline-none"
                 >
-                  Edit Product
-                </Link>
+                  Add to Cart
+                </button>
               </div>
             </div>
           </li>
