@@ -1,15 +1,20 @@
+import { useRef } from "react";
 import { json } from "react-router-dom";
 
 export default function useHttpHooks() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const avtiveHttpRequest = useRef([]);
 
   async function sendRequest(url, method = "GET", body = null, headers = {}) {
+    setLoading(true);
+    const abortController = new AbortController();
     try {
       const res = await fetch(url, {
         method,
         body,
         headers,
+        signal: abortController.signal,
       });
       const resData = await res.json();
       if (!res.ok) {

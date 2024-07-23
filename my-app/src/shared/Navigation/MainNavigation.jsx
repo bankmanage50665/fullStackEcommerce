@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import Logo from "../../assets/Logo.jfif";
 
 export default function MainNavigation() {
@@ -8,7 +8,9 @@ export default function MainNavigation() {
         <ul className="flex justify-between items-center">
           <nav>
             <li>
-              <img className="h-12 w-12 rounded-md" src={Logo} />
+              <Link to="">
+                <img className="h-12 w-12 rounded-md" src={Logo} />
+              </Link>
             </li>
           </nav>
           <nav className="flex ">
@@ -32,11 +34,20 @@ export default function MainNavigation() {
             </li>
             <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
               <NavLink
-                to="contact"
+                to="signup"
                 style={({ isActive }) => (isActive ? { color: "black" } : null)}
                 end
               >
-                Contact
+                Signup
+              </NavLink>
+            </li>
+            <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
+              <NavLink
+                to="products"
+                style={({ isActive }) => (isActive ? { color: "black" } : null)}
+                end
+              >
+                Products
               </NavLink>
             </li>
           </nav>
