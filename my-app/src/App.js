@@ -3,7 +3,12 @@ import "./App.css";
 import RootLayout from "./shared/Navigation/RootLayout";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
+import Products from "./components/Product/Products";
+import ProductsAdd from "./components/Product/ProductsAdd";
+// import ProductsEdit from "./components/Product/ProductsEdit";
 import ProductLayout from "./shared/Navigation/ProductLayout";
+import ProductItem from "./components/Product/ProductItem";
+import EditProducts from "./components/Product/EditProducts";
 
 const router = createBrowserRouter([
   {
@@ -17,9 +22,10 @@ const router = createBrowserRouter([
         path: "products",
         element: <ProductLayout />,
         children: [
-          { index: true, element: <h1>Products page </h1> },
-          { path: "add", element: <h2>Add products</h2> },
-          { path: ":id/edit", element: <h2>Edit products</h2> },
+          { index: true, element: <Products /> },
+          { path: "add", element: <ProductsAdd /> },
+          { path: ":id", element: <ProductItem /> },
+          { path: ":id/edit", element: <EditProducts /> },
         ],
       },
     ],
