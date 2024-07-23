@@ -9,6 +9,8 @@ import ProductsAdd from "./components/Product/ProductsAdd";
 import ProductLayout from "./shared/Navigation/ProductLayout";
 import ProductItem from "./components/Product/ProductItem";
 import EditProducts from "./components/Product/EditProducts";
+import { CartContextProvider } from "./context/CartContext";
+import Cart from "./components/User/Cart";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +24,22 @@ const router = createBrowserRouter([
         path: "products",
         element: <ProductLayout />,
         children: [
-          { index: true, element: <Products /> },
+          {
+            index: true,
+            element: (
+              <CartContextProvider>
+                <Products />
+              </CartContextProvider>
+            ),
+          },
+          {
+            path: "cart",
+            element: (
+              <CartContextProvider>
+                <Cart />
+              </CartContextProvider>
+            ),
+          },
           { path: "add", element: <ProductsAdd /> },
           { path: ":id", element: <ProductItem /> },
           { path: ":id/edit", element: <EditProducts /> },

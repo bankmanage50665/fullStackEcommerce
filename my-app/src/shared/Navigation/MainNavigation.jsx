@@ -14,7 +14,7 @@ export default function MainNavigation() {
             </li>
           </nav>
           <nav className="flex ">
-            <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
+            {/* <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
               <NavLink
                 to=""
                 style={({ isActive }) => (isActive ? { color: "black" } : null)}
@@ -22,8 +22,17 @@ export default function MainNavigation() {
               >
                 Home
               </NavLink>
-            </li>
+            </li> */}
             <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
+              <NavLink
+                to="products/cart"
+                style={({ isActive }) => (isActive ? { color: "black" } : null)}
+                end
+              >
+                Cart
+              </NavLink>
+            </li>
+            {/* <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
               <NavLink
                 to="about"
                 style={({ isActive }) => (isActive ? { color: "black" } : null)}
@@ -31,7 +40,7 @@ export default function MainNavigation() {
               >
                 About
               </NavLink>
-            </li>
+            </li> */}
             <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
               <NavLink
                 to="signup"
