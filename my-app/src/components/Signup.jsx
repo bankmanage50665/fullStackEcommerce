@@ -1,11 +1,33 @@
-import { useState } from "react";
-import { Form, redirect, useSearchParams } from "react-router-dom";
+import { Form, json, useNavigate, useNavigation } from "react-router-dom";
 
 export default function Signup() {
+  const navigation = useNavigation();
+  const isSubmiting = navigation.state === "submitting";
+  const navigate = useNavigate();
   const submitForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch("http://localhost:80/users/signup", {
+        method: "POST",
+        body: JSON.stringify(userData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const resData = await response.json();
+
+      if (!response.ok) {
+        throw json(
+          { message: "Field to create user , Please try again later." },
+          { status: 500 }
+        );
+      }
+      navigate("/login");
+    } catch (err) {}
   };
 
   return (
@@ -57,8 +79,11 @@ export default function Signup() {
           />
         </div>
         <div>
-          <button className="px-4 py-1 bg-stone-400 rounded-md hover:font-bold hover:bg-stone-950 hover:text-white">
-            Submit
+          <button
+            disabled={isSubmiting}
+            className="px-4 py-1 bg-stone-400 rounded-md hover:font-bold hover:bg-stone-950 hover:text-white"
+          >
+            {isSubmiting ? "Submiting" : "Submit"}
           </button>
         </div>
       </Form>

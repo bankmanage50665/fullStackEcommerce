@@ -2,9 +2,11 @@ import { useContext } from "react";
 import CartContext from "../../context/CartContext";
 export default function Cart() {
   const { items, addToCart, removeFromCart } = useContext(CartContext);
+  console.log(items)
 
   return (
     <>
+      {items.length > 0 ? <h1>Cart</h1> : <h1>Nothing in your cart</h1>}
       <ul className="grid gap-4 px-4">
         {items &&
           items.map((item) => (

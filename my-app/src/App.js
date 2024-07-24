@@ -19,7 +19,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <h1>Home page </h1> },
       { path: "about", element: <h1>About page</h1> },
-      { path: "signup", element: <Login /> },
+      { path: "signup", element: <Signup /> },
+      { path: "login", element: <Login /> },
       {
         path: "products",
         element: <ProductLayout />,
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
               </CartContextProvider>
             ),
           },
+
           { path: "add", element: <ProductsAdd /> },
           { path: ":id", element: <ProductItem /> },
           { path: ":id/edit", element: <EditProducts /> },
