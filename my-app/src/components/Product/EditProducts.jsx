@@ -1,11 +1,31 @@
-import { useState } from "react";
-import { Form, redirect, useSearchParams } from "react-router-dom";
+import {
+  Form,
+  useNavigate,
+  useParams,
+  useRouteLoaderData,
+} from "react-router-dom";
+import useHttpHooks from "../../hooks/useHttpHook";
 
 export default function EditProducts() {
+  const { sendRequest } = useHttpHooks();
+  const product = useRouteLoaderData("product");
+  const navigate = useNavigate();
+  const findProduct = product.findProduct;
+  const sp = useParams().id;
   const submitForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
+    console.log(userData);
+
+    const resData = await sendRequest(
+      `http://localhost:80/products/${sp}`,
+      "PATCH",
+      JSON.stringify(userData),
+      { "Content-Type": "application/json" }
+    );
+
+    navigate(`/products/${sp}`);
   };
 
   return (
@@ -26,20 +46,22 @@ export default function EditProducts() {
             type="text"
             id="name"
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            defaultValue={findProduct ? findProduct.name : null}
           />
         </div>
         <div>
           <label
-            htmlFor="discription"
+            htmlFor="description"
             className="block items-center mb-2 text-center font-semibold text-slate-950"
           >
             Description
           </label>
           <input
-            name="discription"
+            name="description"
             type="text"
-            id="discription"
+            id="description"
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            defaultValue={findProduct ? findProduct.description : null}
           />
         </div>
         <div>
@@ -54,6 +76,7 @@ export default function EditProducts() {
             type="text"
             id="image"
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            defaultValue={findProduct ? findProduct.image : null}
           />
         </div>
         <div>
@@ -68,6 +91,7 @@ export default function EditProducts() {
             type="text"
             id="brand"
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            defaultValue={findProduct ? findProduct.brand : null}
           />
         </div>
         <div>
@@ -82,6 +106,7 @@ export default function EditProducts() {
             type="text"
             id="material"
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            defaultValue={findProduct ? findProduct.material : null}
           />
         </div>
         <div>
@@ -96,6 +121,7 @@ export default function EditProducts() {
             type="text"
             id="category"
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            defaultValue={findProduct ? findProduct.category : null}
           />
         </div>
         <div>

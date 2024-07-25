@@ -45,4 +45,35 @@ async function productDetail(req, res, next) {
   res.json({ message: "Find product sucessfully.", findProduct });
 }
 
-module.exports = { createProduct, getAllProducts, productDetail };
+async function editProducts(req, res, next) {
+  const productId = req.params.id;
+  const { name, description, price, image, brand,  category } =
+    req.body;
+
+  let findProduct;
+  try {
+    findProduct = await Product.findById(productId);
+  } catch (err) {
+    return next(new HttpError("Field to find product", 500));
+  }
+
+  findProduct.name = name;
+  findProduct.description = description;
+  findProduct.price = price;
+  findProduct.image = image;
+  findProduct.brand = brand;
+  findProduct.category = category;
+
+  if (!findProduct) {
+    return next(new HttpError("Product not found", 404));
+  }
+
+  try {
+    await findProduct.save();
+  } catch (err) {
+    return next(new HttpError("Field to update product.", 500));
+  }
+  res.json({ message: "Product update sucessfully.", findProduct });
+}
+
+module.exports = { createProduct, getAllProducts, productDetail, editProducts };

@@ -40,15 +40,19 @@ export default function Products() {
               </Carousel>
               <div className="flex flex-col p-4">
                 <h2 className="text-lg font-semibold">{product.name}</h2>
-                <p className="text-sm mb-2">
-                  {product.description.substring(0, 100)}...
-                </p>
+                <p className="text-sm mb-2">{product.description}</p>
                 <div className="flex items-center justify-between mt-auto">
                   <Link
                     to={`${product._id}`}
                     className="text-blue-500 underline hover:text-blue-700"
                   >
                     View Product
+                  </Link>
+                  <Link
+                    to={`${product._id}/edit`}
+                    className="text-blue-500 underline hover:text-blue-700"
+                  >
+                    Edit Product
                   </Link>
                   <button
                     onClick={() => handleAddToCart(product)}
