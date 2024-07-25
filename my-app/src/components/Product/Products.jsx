@@ -1,4 +1,4 @@
-import { Link, useLoaderData, useNavigation, useRouteLoaderData } from "react-router-dom";
+import { Link, useLoaderData, useNavigation } from "react-router-dom";
 import CartContaxt from "../../context/CartContext";
 import { useContext } from "react";
 import { Carousel } from "react-responsive-carousel";
@@ -10,7 +10,7 @@ export default function Products() {
   const { addToCart } = useContext(CartContaxt);
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
-  const products = useRouteLoaderData("product");
+  const products = useLoaderData();
 
   function handleAddToCart(product) {
     addToCart(product);
@@ -19,8 +19,6 @@ export default function Products() {
   return (
     <>
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4">
-        {products &&
-          products.allProduct.map((product) => <h1>{product.name}</h1>)}
         {isLoading && <h1>Loading...</h1>}
         {products &&
           products.allProduct.map((product) => (
@@ -47,7 +45,7 @@ export default function Products() {
                 </p>
                 <div className="flex items-center justify-between mt-auto">
                   <Link
-                    to={`${product.id}`}
+                    to={`${product._id}`}
                     className="text-blue-500 underline hover:text-blue-700"
                   >
                     View Product

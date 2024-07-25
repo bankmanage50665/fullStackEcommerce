@@ -30,4 +30,19 @@ async function getAllProducts(req, res, next) {
   res.json({ message: "Product find sucessfully.", allProduct });
 }
 
-module.exports = { createProduct, getAllProducts };
+async function productDetail(req, res, next) {
+  const productId = req.params.id;
+
+  let findProduct;
+  try {
+    findProduct = await Product.findById(productId);
+  } catch (err) {
+    return next(new HttpError("Field to find product", 500));
+  }
+  if (!findProduct) {
+    return next(new HttpError("Product not found", 404));
+  }
+  res.json({ message: "Find product sucessfully.", findProduct });
+}
+
+module.exports = { createProduct, getAllProducts, productDetail };

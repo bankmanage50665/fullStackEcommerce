@@ -9,7 +9,9 @@ import Products, {
 // import ProductsEdit from "./components/Product/ProductsEdit";
 import AddProducts from "./components/Product/AddProducts";
 import ProductLayout from "./shared/Navigation/ProductLayout";
-import ProductItem from "./components/Product/ProductItem";
+import ProductItem, {
+  loader as productDetailLoader,
+} from "./components/Product/ProductItem";
 import EditProducts from "./components/Product/EditProducts";
 import { CartContextProvider } from "./context/CartContext";
 import Cart from "./components/User/Cart";
@@ -26,6 +28,7 @@ const router = createBrowserRouter([
       {
         path: "products",
         element: <ProductLayout />,
+
         children: [
           {
             index: true,
@@ -35,7 +38,6 @@ const router = createBrowserRouter([
               </CartContextProvider>
             ),
             loader: productLoader,
-            id: 'product',
           },
           {
             path: "cart",
@@ -47,8 +49,15 @@ const router = createBrowserRouter([
           },
 
           { path: "add", element: <AddProducts /> },
-          { path: ":id", element: <ProductItem /> },
-          { path: ":id/edit", element: <EditProducts /> },
+          {
+            path: ":id",
+            loader: productDetailLoader,
+            id: "product",
+            children: [
+              { index: true, element: <ProductItem /> },
+              { path: ":id/edit", element: <EditProducts /> },
+            ],
+          },
         ],
       },
     ],
