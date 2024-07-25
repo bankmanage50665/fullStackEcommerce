@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const userRouter = require("./routes/user/user_routes");
 const HttpError = require("./utils/errorModal");
 const productRoutes = require("./routes/products/products_routes");
+const orderRouter = require("./routes/user/order_routes");
 
 const url =
   "mongodb+srv://rahul1234:YaUJqtFam74ZnZvL@cluster0.wdrbduw.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0";
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use("/users", userRouter);
 app.use("/products", productRoutes);
+app.use("/orders", orderRouter);
 
 app.use((req, res, next) => {
   const error = new HttpError("Could not find this route", 404);

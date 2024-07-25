@@ -16,7 +16,6 @@ export default function EditProducts() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
-    console.log(userData);
 
     const resData = await sendRequest(
       `http://localhost:80/products/${sp}`,
@@ -25,7 +24,7 @@ export default function EditProducts() {
       { "Content-Type": "application/json" }
     );
 
-    navigate(`/products/${sp}`);
+    navigate("/products", { state: { editedProductId: sp } });
   };
 
   return (

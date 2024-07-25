@@ -15,6 +15,9 @@ import ProductItem, {
 import EditProducts from "./components/Product/EditProducts";
 import { CartContextProvider } from "./context/CartContext";
 import Cart from "./components/User/Cart";
+import PlaceOrder, {
+  loader as getProductLoader,
+} from "./components/User/placeOrder";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +62,11 @@ const router = createBrowserRouter([
             ],
           },
         ],
+      },
+      {
+        path: "order",
+        element: <PlaceOrder />,
+        loader: getProductLoader,
       },
     ],
   },
