@@ -1,11 +1,18 @@
 import { Form, json, useNavigate, useNavigation } from "react-router-dom";
 import useHttpHooks from "../hooks/useHttpHook";
+import ImageUpload from "../shared/ImageUpload";
+import { useState } from "react";
 
 export default function Signup() {
+  const [files, setFiles] = useState(null);
   const navigation = useNavigation();
   const isSubmiting = navigation.state === "submitting";
   const navigate = useNavigate();
   const { sendRequest } = useHttpHooks();
+  function handleGetFiles(files) {
+    setFiles(files);
+  }
+
   const submitForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -25,7 +32,7 @@ export default function Signup() {
       navigate("/login");
     } catch (err) {}
   };
-
+  console.log(files);
   return (
     <>
       <Form
@@ -74,6 +81,7 @@ export default function Signup() {
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
+        <ImageUpload onChangeImages={handleGetFiles} />
         <div>
           <button
             disabled={isSubmiting}
