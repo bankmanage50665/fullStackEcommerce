@@ -4,8 +4,8 @@ import RootLayout from "./shared/Navigation/RootLayout";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Products from "./components/Product/Products";
-import ProductsAdd from "./components/Product/ProductsAdd";
 // import ProductsEdit from "./components/Product/ProductsEdit";
+import AddProducts from "./components/Product/AddProducts";
 import ProductLayout from "./shared/Navigation/ProductLayout";
 import ProductItem from "./components/Product/ProductItem";
 import EditProducts from "./components/Product/EditProducts";
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
             ),
           },
 
-          { path: "add", element: <ProductsAdd /> },
+          { path: "add", element: <AddProducts /> },
           { path: ":id", element: <ProductItem /> },
           { path: ":id/edit", element: <EditProducts /> },
         ],

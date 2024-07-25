@@ -1,11 +1,29 @@
-import { useState } from "react";
-import { Form, redirect, useSearchParams } from "react-router-dom";
+import { Form, json, useNavigate, useNavigation } from "react-router-dom";
+import useHttpHooks from "../../hooks/useHttpHook";
 
-export default function AddProducts() {
+export default function Signup() {
+  const { sendRequest } = useHttpHooks();
+  const navigation = useNavigation();
+  const isSubmiting = navigation.state === "submitting";
+  const navigate = useNavigate();
   const submitForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const userData = Object.fromEntries(formData.entries());
+    const productData = Object.fromEntries(formData.entries());
+
+    try {
+      const resData = await sendRequest(
+        "http://localhost:80/products/add",
+        "POST",
+        JSON.stringify(productData),
+        {
+          "Content-Type": "application/json",
+        }
+      );
+      console.log(resData);
+
+      navigate("/products");
+    } catch (err) {}
   };
 
   return (
@@ -30,15 +48,15 @@ export default function AddProducts() {
         </div>
         <div>
           <label
-            htmlFor="discription"
+            htmlFor="description"
             className="block items-center mb-2 text-center font-semibold text-slate-950"
           >
             Description
           </label>
           <input
-            name="discription"
+            name="description"
             type="text"
-            id="discription"
+            id="description"
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
@@ -47,7 +65,7 @@ export default function AddProducts() {
             htmlFor="image"
             className="block items-center mb-2 text-center font-semibold text-slate-950"
           >
-            Image
+            image
           </label>
           <input
             name="image"
@@ -58,10 +76,24 @@ export default function AddProducts() {
         </div>
         <div>
           <label
+            htmlFor="price"
+            className="block items-center mb-2 text-center font-semibold text-slate-950"
+          >
+            price
+          </label>
+          <input
+            name="price"
+            type="number"
+            id="price"
+            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label
             htmlFor="brand"
             className="block items-center mb-2 text-center font-semibold text-slate-950"
           >
-            Brand
+            brand
           </label>
           <input
             name="brand"
@@ -75,7 +107,7 @@ export default function AddProducts() {
             htmlFor="material"
             className="block items-center mb-2 text-center font-semibold text-slate-950"
           >
-            Material
+            material
           </label>
           <input
             name="material"
@@ -89,7 +121,7 @@ export default function AddProducts() {
             htmlFor="category"
             className="block items-center mb-2 text-center font-semibold text-slate-950"
           >
-            Category
+            category
           </label>
           <input
             name="category"
@@ -98,9 +130,13 @@ export default function AddProducts() {
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
+
         <div>
-          <button className="px-4 py-1 bg-stone-400 rounded-md hover:font-bold hover:bg-stone-950 hover:text-white">
-            Submit
+          <button
+            disabled={isSubmiting}
+            className="px-4 py-1 bg-stone-400 rounded-md hover:font-bold hover:bg-stone-950 hover:text-white"
+          >
+            {isSubmiting ? "Submiting" : "Submit"}
           </button>
         </div>
       </Form>

@@ -1,31 +1,27 @@
 import { Form, json, useNavigate, useNavigation } from "react-router-dom";
+import useHttpHooks from "../hooks/useHttpHook";
 
 export default function Signup() {
   const navigation = useNavigation();
   const isSubmiting = navigation.state === "submitting";
   const navigate = useNavigate();
+  const { sendRequest } = useHttpHooks();
   const submitForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch("http://localhost:80/users/signup", {
-        method: "POST",
-        body: JSON.stringify(userData),
-        headers: {
+      const resData = await sendRequest(
+        "http://localhost:80/users/signup",
+        "POST",
+        JSON.stringify(userData),
+        {
           "Content-Type": "application/json",
-        },
-      });
+        }
+      );
+      console.log(resData);
 
-      const resData = await response.json();
-
-      if (!response.ok) {
-        throw json(
-          { message: "Field to create user , Please try again later." },
-          { status: 500 }
-        );
-      }
       navigate("/login");
     } catch (err) {}
   };

@@ -1,10 +1,10 @@
-import { useRef } from "react";
+import { useEffect, useRef , useState} from "react";
 import { json } from "react-router-dom";
 
 export default function useHttpHooks() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const avtiveHttpRequest = useRef([]);
+  const activeHttpRequest = useRef([]);
 
   async function sendRequest(url, method = "GET", body = null, headers = {}) {
     setLoading(true);
@@ -16,6 +16,9 @@ export default function useHttpHooks() {
         headers,
         signal: abortController.signal,
       });
+      activeHttpRequest.current = activeHttpRequest.current.filter(
+        (reqCtr) => reqCtr !== abortController
+      );
       const resData = await res.json();
       if (!res.ok) {
         throw json(
@@ -38,6 +41,14 @@ export default function useHttpHooks() {
       //   );
     }
   }
+
+  useEffect(() => {
+    return () => {
+      activeHttpRequest.current.forEach((abortController) =>
+        abortController.abort()
+      );
+    };
+  }, []);
 
   const clearErr = () => {
     setError(null);

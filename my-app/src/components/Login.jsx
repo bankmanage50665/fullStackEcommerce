@@ -1,12 +1,32 @@
-import { useState } from "react";
-import { Form, redirect, useSearchParams } from "react-router-dom";
+import { Form, json, useNavigate } from "react-router-dom";
+import useHttpHooks from "../hooks/useHttpHook";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const { sendRequest } = useHttpHooks();
   const submitForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
-    console.log(userData);
+
+    try {
+      const resData = await sendRequest(
+        "http://localhost/users/login",
+        "POST",
+        JSON.stringify(userData),
+        {
+          "Content-Type": "application/json",
+        }
+      );
+      console.log(resData);
+
+      navigate("/products");
+    } catch (err) {
+      throw json(
+        { message: "Field to login user, Please try again later." },
+        { status: 500 }
+      );
+    }
   };
 
   return (

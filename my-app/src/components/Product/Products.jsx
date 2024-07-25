@@ -4,6 +4,8 @@ import { useContext } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
+import useHttpHooks from "../../hooks/useHttpHook";
+
 const images = [
   "https://jlineartsandsilks.com/wp-content/uploads/2022/04/JL_JBS_MC-05-Jaipur-Bandhani-Saree-in-Multi-color-body-with-zari-border-1-2.jpg",
   "https://tajbridalstore.in/cdn/shop/products/untitled-55_1f1c1299-aa55-4c29-9c5e-b45360e0b7c4.webp?v=1696627792",
@@ -167,4 +169,8 @@ export default function Products() {
       </ul>
     </>
   );
+}
+
+export async function loader(req, res) {
+  const response = await fetch("http://localhost/products/");
 }

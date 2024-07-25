@@ -6,7 +6,6 @@ export default function EditProducts() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
-    console.log(userData);
   };
 
   return (
