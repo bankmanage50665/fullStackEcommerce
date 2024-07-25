@@ -9,7 +9,8 @@ async function createProduct(req, res, next) {
     description,
     image,
     brand,
-    category, material
+    category,
+    material,
   });
 
   try {
@@ -23,4 +24,10 @@ async function createProduct(req, res, next) {
   res.json({ message: "Product created sucessfully", createdProduct });
 }
 
-module.exports = { createProduct };
+async function getAllProducts(req, res, next) {
+  const allProduct = await Product.find();
+
+  res.json({ message: "Product find sucessfully.", allProduct });
+}
+
+module.exports = { createProduct, getAllProducts };

@@ -3,7 +3,9 @@ import "./App.css";
 import RootLayout from "./shared/Navigation/RootLayout";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
-import Products from "./components/Product/Products";
+import Products, {
+  loader as productLoader,
+} from "./components/Product/Products";
 // import ProductsEdit from "./components/Product/ProductsEdit";
 import AddProducts from "./components/Product/AddProducts";
 import ProductLayout from "./shared/Navigation/ProductLayout";
@@ -32,6 +34,8 @@ const router = createBrowserRouter([
                 <Products />
               </CartContextProvider>
             ),
+            loader: productLoader,
+            id: 'product',
           },
           {
             path: "cart",
