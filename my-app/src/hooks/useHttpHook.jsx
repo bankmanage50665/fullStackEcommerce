@@ -30,7 +30,6 @@ export default function useHttpHooks() {
           { status: 500 }
         );
       }
-      setLoading(false);
       return resData;
     } catch (err) {
       setError(err);

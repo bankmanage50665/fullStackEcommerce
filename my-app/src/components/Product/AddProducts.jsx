@@ -1,25 +1,39 @@
-import { Form, json, useNavigate, useNavigation } from "react-router-dom";
+import { Form, useNavigate, useNavigation } from "react-router-dom";
+import { useState } from "react";
 import useHttpHooks from "../../hooks/useHttpHook";
+import ImageUpload from "../../shared/ImageUpload";
 
 export default function Signup() {
+  const [files, setFiles] = useState([]);
   const { sendRequest } = useHttpHooks();
   const navigation = useNavigation();
   const isSubmiting = navigation.state === "submitting";
   const navigate = useNavigate();
+
+  function handleGetImg(img) {
+    setFiles(img);
+  }
   const submitForm = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const productData = Object.fromEntries(formData.entries());
+    const productData = e.target.elements;
+    console.log(productData.name.value);
 
     try {
-      const resData = await sendRequest(
-        "http://localhost:80/products/add",
-        "POST",
-        JSON.stringify(productData),
-        {
-          "Content-Type": "application/json",
-        }
-      );
+      const formData = new FormData();
+      formData.append("name", productData.name.value);
+      formData.append("description", productData.description.value);
+      formData.append("price", productData.price.value);
+      formData.append("brand", productData.brand.value);
+      formData.append("material", productData.material.value);
+      formData.append("category", productData.category.value);
+      files.forEach((files) => formData.append("image", files));
+      console.log(formData);
+      console.log(productData.name.value);
+      const res = await fetch("http://localhost:80/products/add", {
+        method: "POST",
+        body: formData,
+      });
+      const resData = await res.json();
       console.log(resData);
 
       navigate("/products");
@@ -60,20 +74,7 @@ export default function Signup() {
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
-        <div>
-          <label
-            htmlFor="image"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
-          >
-            image
-          </label>
-          <input
-            name="image"
-            type="text"
-            id="image"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-          />
-        </div>
+
         <div>
           <label
             htmlFor="price"
@@ -130,6 +131,7 @@ export default function Signup() {
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
+        <ImageUpload onChangeImages={handleGetImg} />
 
         <div>
           <button

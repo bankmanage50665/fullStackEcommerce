@@ -36,7 +36,6 @@ export default function Products() {
   return (
     <>
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4">
-        {isLoading && <h1>Loading...</h1>}
         {products &&
           products.allProduct.map((product) => (
             <li

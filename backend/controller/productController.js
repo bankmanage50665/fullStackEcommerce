@@ -2,12 +2,13 @@ const Product = require("../modal/product_modal");
 const HttpError = require("../utils/errorModal");
 
 async function createProduct(req, res, next) {
-  const { name, description, image, brand, category, material } = req.body;
+  const { name, description, brand, category, material } = req.body;
 
+  console.log(req.files);
   const createdProduct = new Product({
     name,
     description,
-    image,
+    image: req.files.map((file) => file.path),
     brand,
     category,
     material,
@@ -17,7 +18,7 @@ async function createProduct(req, res, next) {
     await createdProduct.save();
   } catch (err) {
     return next(
-      new HttpError("Field to create new user, Please try again later.", 500)
+      new HttpError("Field to create new product, Please try again later.", 500)
     );
   }
 
@@ -47,8 +48,7 @@ async function productDetail(req, res, next) {
 
 async function editProducts(req, res, next) {
   const productId = req.params.id;
-  const { name, description, price, image, brand,  category } =
-    req.body;
+  const { name, description, price, image, brand, category } = req.body;
 
   let findProduct;
   try {

@@ -13,33 +13,30 @@ export default function ImageUpload({ onChangeImages }) {
 
   return (
     <>
-      <form>
-        <div>
-          <label htmlFor="image">Image</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*"
-            ref={imgRef}
-            multiple
-            onChange={handleOnChange}
-          />
-        </div>
-        <div>
-          {previewUrl &&
-            previewUrl.length > 0 &&
-            previewUrl.map((url, index) => (
-              <img
-                src={url}
-                key={index}
-                alt="Preview img"
-                className="w-40 h-40 object-cover flex flex-row"
-              />
-            ))}
-        </div>
-        <button>Submit form </button>
-      </form>
+      <div>
+        <label htmlFor="image">Image</label>
+        <input
+          type="file"
+          id="image"
+          name="image"
+          accept="image/*"
+          ref={imgRef}
+          multiple
+          onChange={handleOnChange}
+        />
+      </div>
+      <div>
+        {previewUrl &&
+          previewUrl.length > 0 &&
+          previewUrl.map((url, index) => (
+            <img
+              src={url}
+              key={index}
+              alt="Preview img"
+              className="w-40 h-40 object-cover flex flex-row"
+            />
+          ))}
+      </div>
     </>
   );
 }
