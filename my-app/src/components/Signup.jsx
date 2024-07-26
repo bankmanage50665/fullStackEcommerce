@@ -1,5 +1,4 @@
-import { Form, json, useNavigate, useNavigation } from "react-router-dom";
-import useHttpHooks from "../hooks/useHttpHook";
+import { Form, useNavigate, useNavigation } from "react-router-dom";
 import ImageUpload from "../shared/ImageUpload";
 import { useState } from "react";
 
@@ -12,7 +11,6 @@ export default function Signup() {
   function handleGetFiles(files) {
     setFiles(files);
   }
-  console.log(files);
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -29,7 +27,6 @@ export default function Signup() {
         body: formData,
       });
       const resData = await res.json();
-      console.log(resData);
 
       navigate("/login");
     } catch (err) {}
