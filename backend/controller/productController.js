@@ -4,7 +4,6 @@ const HttpError = require("../utils/errorModal");
 async function createProduct(req, res, next) {
   const { name, description, brand, category, material } = req.body;
 
-  console.log(req.files);
   const createdProduct = new Product({
     name,
     description,

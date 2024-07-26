@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const userRouter = require("./routes/user/user_routes");
 const HttpError = require("./utils/errorModal");
@@ -25,6 +26,8 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use("/users", userRouter);
 app.use("/products", productRoutes);

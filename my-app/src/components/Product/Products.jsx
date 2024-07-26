@@ -1,11 +1,10 @@
 import {
   Link,
   useLoaderData,
-  useLocation,
   useNavigation,
 } from "react-router-dom";
 import CartContaxt from "../../context/CartContext";
-import { useContext, useEffect, useRef } from "react";
+import { useContext } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
@@ -16,18 +15,7 @@ export default function Products() {
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
   const products = useLoaderData();
-  const location = useLocation();
-  const productRef = useRef({});
-
-  const { editedProductId } = location.state || {};
-
-  useEffect(() => {
-    if (editedProductId && productRef.current[editedProductId]) {
-      productRef.current[editedProductId].scrollIntoView({
-        behavior: "smooth",
-      });
-    }
-  }, [editedProductId]);
+  console.log(products.allProduct.image);
 
   function handleAddToCart(product) {
     addToCart(product);
@@ -41,7 +29,6 @@ export default function Products() {
             <li
               key={product.id}
               className="flex flex-col rounded-md shadow-md bg-white overflow-hidden"
-              ref={(el) => (productRef.current[product.id] = el)}
             >
               <Carousel
                 autoplay
@@ -49,11 +36,13 @@ export default function Products() {
                 showStatus={false}
                 showThumbs={false}
               >
-                <img
-                  src={product.image}
-                  className="w-full object-cover h-48 sm:h-64 lg:h-80"
-                  alt={product.name}
-                />
+                {product.image.map((img) => (
+                  <img
+                    src={`http://localhost:80/${img}`}
+                    className="w-full object-cover h-48 sm:h-64 lg:h-80"
+                    alt={product.name}
+                  />
+                ))}
               </Carousel>
               <div className="flex flex-col p-4">
                 <h2 className="text-lg font-semibold">{product.name}</h2>
