@@ -11,20 +11,21 @@ const orderRouter = require("./routes/user/order_routes");
 const url =
   "mongodb+srv://rahul1234:YaUJqtFam74ZnZvL@cluster0.wdrbduw.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0";
 
+app.use(bodyParser.json());
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-  );
+  res.setHeader("Access-Control-Allow-Origin", "*"),
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    ),
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Authorization"
+    );
+
   next();
 });
 
-app.use(bodyParser.json());
 app.use("/users", userRouter);
 app.use("/products", productRoutes);
 app.use("/orders", orderRouter);

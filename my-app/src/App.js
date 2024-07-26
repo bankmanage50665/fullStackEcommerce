@@ -18,6 +18,7 @@ import Cart from "./components/User/Cart";
 import PlaceOrder, {
   loader as getProductLoader,
 } from "./components/User/placeOrder";
+import ImageUpload from "./shared/ImageUpload";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       { path: "about", element: <h1>About page</h1> },
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
+      { path: "image", element: <ImageUpload/>},
       {
         path: "products",
         element: <ProductLayout />,

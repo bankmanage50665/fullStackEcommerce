@@ -8,31 +8,32 @@ export default function Signup() {
   const navigation = useNavigation();
   const isSubmiting = navigation.state === "submitting";
   const navigate = useNavigate();
-  const { sendRequest } = useHttpHooks();
+
   function handleGetFiles(files) {
     setFiles(files);
   }
+  console.log(files);
 
   const submitForm = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const userData = Object.fromEntries(formData.entries());
+    const formData = new FormData();
+    const formElements = e.target.elements;
 
     try {
-      const resData = await sendRequest(
-        "http://localhost:80/users/signup",
-        "POST",
-        JSON.stringify(userData),
-        {
-          "Content-Type": "application/json",
-        }
-      );
+      formData.append("name", formElements.name.value);
+      formData.append("email", formElements.email.value);
+      formData.append("password", formElements.password.value);
+      files.forEach((file) => formData.append("image", file));
+      const res = await fetch("http://localhost:80/users/signup", {
+        method: "POST",
+        body: formData,
+      });
+      const resData = await res.json();
       console.log(resData);
 
       navigate("/login");
     } catch (err) {}
   };
-  console.log(files);
   return (
     <>
       <Form

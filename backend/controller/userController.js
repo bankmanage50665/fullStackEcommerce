@@ -18,7 +18,12 @@ async function signup(req, res, next) {
     );
   }
 
-  const createdUser = new User({ name, email, password: hashedPassword });
+  const createdUser = new User({
+    name,
+    email,
+    password: hashedPassword,
+    image: req.files.map((file) => file.path),
+  });
   try {
     await createdUser.save();
   } catch (err) {
