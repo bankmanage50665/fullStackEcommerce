@@ -1,14 +1,18 @@
-import { Form, useNavigate, useNavigation } from "react-router-dom";
+import {
+  Form,
+  useNavigate,
+  useNavigation,
+  useRouteLoaderData,
+} from "react-router-dom";
 import { useState } from "react";
-import useHttpHooks from "../../hooks/useHttpHook";
 import ImageUpload from "../../shared/ImageUpload";
 
 export default function Signup() {
   const [files, setFiles] = useState([]);
-  const { sendRequest } = useHttpHooks();
   const navigation = useNavigation();
   const isSubmiting = navigation.state === "submitting";
   const navigate = useNavigate();
+  const token = useRouteLoaderData("token");
 
   function handleGetImg(img) {
     setFiles(img);
@@ -32,6 +36,9 @@ export default function Signup() {
       const res = await fetch("http://localhost:80/products/add", {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       });
       const resData = await res.json();
       console.log(resData);

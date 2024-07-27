@@ -18,15 +18,23 @@ import Cart from "./components/User/Cart";
 import PlaceOrder, {
   loader as getProductLoader,
 } from "./components/User/placeOrder";
+import { action as logoutAction } from "./middleware/logout";
+import {
+  loader as getTokenLoader,
+  checkAuthLoader,
+} from "./middleware/getToken";
 
 const router = createBrowserRouter([
   {
     path: "",
     element: <RootLayout />,
+    loader: getTokenLoader,
+    id: "token",
     children: [
       { index: true, element: <h1>Home page </h1> },
       { path: "about", element: <h1>About page</h1> },
       { path: "signup", element: <Signup /> },
+
       { path: "login", element: <Login /> },
       {
         path: "products",
@@ -51,14 +59,22 @@ const router = createBrowserRouter([
             ),
           },
 
-          { path: "add", element: <AddProducts /> },
+          { path: "add", element: <AddProducts />, loader: checkAuthLoader },
           {
             path: ":id",
             loader: productDetailLoader,
             id: "product",
             children: [
-              { index: true, element: <ProductItem /> },
-              { path: "edit", element: <EditProducts /> },
+              {
+                index: true,
+                element: <ProductItem />,
+                loader: checkAuthLoader,
+              },
+              {
+                path: "edit",
+                element: <EditProducts />,
+                loader: checkAuthLoader,
+              },
             ],
           },
         ],
@@ -68,6 +84,7 @@ const router = createBrowserRouter([
         element: <PlaceOrder />,
         loader: getProductLoader,
       },
+      { path: "logout", action: logoutAction },
     ],
   },
 ]);

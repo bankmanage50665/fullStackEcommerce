@@ -2,6 +2,7 @@ import {
   Link,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
 } from "react-router-dom";
 import CartContaxt from "../../context/CartContext";
 import { useContext } from "react";
@@ -15,7 +16,7 @@ export default function Products() {
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
   const products = useLoaderData();
-  console.log(products.allProduct.image);
+  const token = useRouteLoaderData("token");
 
   function handleAddToCart(product) {
     addToCart(product);
@@ -54,12 +55,14 @@ export default function Products() {
                   >
                     View Product
                   </Link>
-                  <Link
-                    to={`${product._id}/edit`}
-                    className="text-blue-500 underline hover:text-blue-700"
-                  >
-                    Edit Product
-                  </Link>
+                  {token && (
+                    <Link
+                      to={`${product._id}/edit`}
+                      className="text-blue-500 underline hover:text-blue-700"
+                    >
+                      Edit Product
+                    </Link>
+                  )}
                   <button
                     onClick={() => handleAddToCart(product)}
                     className="px-4 py-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 focus:outline-none"

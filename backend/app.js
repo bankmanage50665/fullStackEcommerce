@@ -21,8 +21,11 @@ app.use((req, res, next) => {
     ),
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Authorization"
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     );
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200); // End the request with a 200 status for preflight
+  }
 
   next();
 });

@@ -1,7 +1,9 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, Form, useRouteLoaderData } from "react-router-dom";
 import Logo from "../../assets/Logo.jfif";
 
 export default function MainNavigation() {
+  const token = useRouteLoaderData("token");
+  console.log(token);
   return (
     <>
       <header className="w-full h-auto bg-black px-4 py-6">
@@ -14,15 +16,6 @@ export default function MainNavigation() {
             </li>
           </nav>
           <nav className="flex ">
-            {/* <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
-              <NavLink
-                to=""
-                style={({ isActive }) => (isActive ? { color: "black" } : null)}
-                end
-              >
-                Home
-              </NavLink>
-            </li> */}
             <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
               <NavLink
                 to="products/cart"
@@ -32,24 +25,43 @@ export default function MainNavigation() {
                 Cart
               </NavLink>
             </li>
-            {/* <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
-              <NavLink
-                to="about"
-                style={({ isActive }) => (isActive ? { color: "black" } : null)}
-                end
-              >
-                About
-              </NavLink>
-            </li> */}
-            <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
-              <NavLink
-                to="signup"
-                style={({ isActive }) => (isActive ? { color: "black" } : null)}
-                end
-              >
-                Signup
-              </NavLink>
-            </li>
+
+            {!token && (
+              <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
+                <NavLink
+                  to="signup"
+                  style={({ isActive }) =>
+                    isActive ? { color: "black" } : null
+                  }
+                  end
+                >
+                  Signup
+                </NavLink>
+              </li>
+            )}
+
+            {!token && (
+              <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
+                <NavLink
+                  to="login"
+                  style={({ isActive }) =>
+                    isActive ? { color: "black" } : null
+                  }
+                  end
+                >
+                  Login
+                </NavLink>
+              </li>
+            )}
+
+            {token && (
+              <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
+                <Form action="/logout" method="post">
+                  <button>Logout </button>
+                </Form>
+              </li>
+            )}
+
             <li className="bg-stone-500 px-4 py-1 rounded-md mx-2 text-white font-bold">
               <NavLink
                 to="products"

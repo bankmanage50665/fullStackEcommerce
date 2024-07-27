@@ -9,7 +9,7 @@ export default function ProductDetail() {
 
   return (
     <>
-      <div className="product-detail grid grid-cols-1 lg:grid-cols-12 gap-4 bg-white rounded-lg shadow-md overflow-hidden p-4">
+      <div className="product-detail grid grid-cols-1 lg:grid-cols-12 gap-4 bg-white rounded-lg shadow-md overflow-hidden md:h-screen p-4 md:p-8 md:m-8">
         <div className="lg:col-span-6">
           {/* Carousel with responsive settings */}
           <Carousel
@@ -23,7 +23,7 @@ export default function ProductDetail() {
             {findProduct.image.map((img) => (
               <div key={img}>
                 <img
-                  className="object-cover w-full h-full rounded-md shadow-xl"
+                  className="object-cover w-full h-full rounded-md shadow-xl md:h-screen md:w-full"
                   src={`http://localhost/${img}`}
                   alt={findProduct.name}
                 />

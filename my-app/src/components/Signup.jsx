@@ -27,6 +27,8 @@ export default function Signup() {
         body: formData,
       });
       const resData = await res.json();
+      console.log(resData)
+      localStorage.setItem("token", resData.token);
 
       navigate("/login");
     } catch (err) {}

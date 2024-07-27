@@ -18,7 +18,7 @@ export default function Login() {
           "Content-Type": "application/json",
         }
       );
-      console.log(resData);
+      localStorage.setItem("token", resData.token);
 
       navigate("/products");
     } catch (err) {

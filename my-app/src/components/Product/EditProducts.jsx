@@ -9,22 +9,30 @@ import useHttpHooks from "../../hooks/useHttpHook";
 export default function EditProducts() {
   const { sendRequest } = useHttpHooks();
   const product = useRouteLoaderData("product");
+  const token = useRouteLoaderData("token");
   const navigate = useNavigate();
   const findProduct = product.findProduct;
   const sp = useParams().id;
+
+  console.log(token);
   const submitForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
 
-    const resData = await sendRequest(
-      `http://localhost:80/products/${sp}`,
-      "PATCH",
-      JSON.stringify(userData),
-      { "Content-Type": "application/json" }
-    );
+    const response = await fetch(`http://localhost:80/products/${sp}`, {
+      method: "PATCH",
+      body: JSON.stringify(userData),
 
-    navigate("/products", { state: { editedProductId: sp } });
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+
+    navigate("/products");
   };
 
   return (

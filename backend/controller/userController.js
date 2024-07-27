@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const HttpError = require("../utils/errorModal");
 const User = require("../modal/user_modal");
@@ -31,8 +32,18 @@ async function signup(req, res, next) {
       new HttpError("Field to created user, Please try again later.", 401)
     );
   }
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email },
+      "secret",
+      { expiresIn: "5h" }
+    );
+  } catch (err) {}
 
-  return res.status(201).json({ createdUser });
+  return res
+    .status(201)
+    .json({ userId: createdUser.id, email: createdUser.email, token });
 }
 
 async function login(req, res, next) {
@@ -63,7 +74,19 @@ async function login(req, res, next) {
     );
   }
 
-  res.json({ message: "User login sucessfully.", findUser });
+  let token;
+  try {
+    token = jwt.sign({ userId: findUser.id, email: findUser.email }, "secret", {
+      expiresIn: "5h",
+    });
+  } catch (err) {}
+
+  res.json({
+    message: "User login sucessfully.",
+    userId: findUser.id,
+    email: findUser.email,
+    token,
+  });
 }
 
 module.exports = {
