@@ -1,7 +1,15 @@
+import { useState } from "react";
 import { Form, json, useNavigate } from "react-router-dom";
 import useHttpHooks from "../hooks/useHttpHook";
 
+import { MdOutlineEmail } from "react-icons/md";
+import { RiLockPasswordLine } from "react-icons/ri";
+
+
+
+
 export default function Login() {
+  const [isSubmiting, setIsSubmiting] = useState()
   const navigate = useNavigate();
   const { sendRequest } = useHttpHooks();
   const submitForm = async (e) => {
@@ -33,39 +41,53 @@ export default function Login() {
     <>
       <Form
         onSubmit={submitForm}
-        className="p-6 bg-stone-200 w-80 h-auto mt-6 m-auto rounded-md shadow-xl md:w-1/2 md:m-auto"
+        className="p-6 backdrop-blur-2xl w-80 h-auto mt-6 m-auto rounded-md shadow-xl md:w-1/2 md:m-auto"
       >
-        <div>
+
+        <div className="text-white items-center">
           <label
             htmlFor="email"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
+            className="block items-center mb-2 text-center font-semibold text-white text-2xl"
           >
             Email
           </label>
-          <input
-            name="email"
-            type="email"
-            id="email"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-          />
+          <div className="flex ">
+            <MdOutlineEmail className="text-white text-2xl" />
+            <input
+              name="email"
+              type="email"
+              placeholder="Enter Your E-mail"
+              id="email"
+              className="block items-center bg-transparent text-white  w-full rounded-md p-1 mb-4 focus:border-indigo-500 ml-5"
+            />
+          </div>
         </div>
-        <div>
+        <div className="text-white items-center">
           <label
             htmlFor="password"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
+            className="block items-center mb-2 text-center font-semibold text-white text-2xl"
           >
             Password
           </label>
-          <input
-            name="password"
-            type="password"
-            id="password"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-          />
+          <div className="flex ">
+            <RiLockPasswordLine className="text-white text-2xl" />
+            <input
+              name="password"
+              type="password"
+              placeholder="Enter Your Password"
+              id="password"
+              className="block items-center bg-transparent text-white  w-full rounded-md p-1 mb-4 focus:border-indigo-500 ml-5"
+            />
+          </div>
         </div>
+
+
         <div>
-          <button className="px-4 py-1 bg-stone-400 rounded-md hover:font-bold hover:bg-stone-950 hover:text-white">
-            Submit
+          <button
+            disabled={isSubmiting}
+            className="px-4 py-1 bg-luxury-gold hover:bg-luxury-gold-hover rounded-md hover:font-bold hover:text-white text-white"
+          >
+            {isSubmiting ? "Submiting" : "Submit"}
           </button>
         </div>
       </Form>

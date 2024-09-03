@@ -13,7 +13,7 @@ export default function MainNavigation() {
   // fixed top-0 left-0 right-0 z-50
 
   return (
-    <header className="w-full px-4 py-3 fixed top-0 left-0 right-0 z-50 bg-white bg-opacity-10 backdrop-blur-sm  shadow-md transition-all duration-300 ease-in-out">
+    <header className="w-full px-4 py-3  bg-white bg-opacity-10 backdrop-blur-sm  shadow-md transition-all duration-300 ease-in-out">
       <div className="max-w-7xl mx-auto">
         <ul className="flex flex-wrap justify-between items-center">
           <li>
@@ -23,7 +23,7 @@ export default function MainNavigation() {
           </li>
           <nav className="flex flex-wrap items-center space-x-1 sm:space-x-2 md:space-x-4">
             <NavLink
-              to="products/cart"
+              to="signup"
               className={({ isActive }) =>
                 `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold text-white hover:text-black  ${isActive
                   ? 'bg-gray-200 text-black'
@@ -35,7 +35,7 @@ export default function MainNavigation() {
               <span className="text-xs">Signup</span>
             </NavLink>
             <NavLink
-              to="products/cart"
+              to="login"
               className={({ isActive }) =>
                 `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold  text-white hover:text-black  ${isActive
                   ? 'bg-gray-200 text-custom-blue'

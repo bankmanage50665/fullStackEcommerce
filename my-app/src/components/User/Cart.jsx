@@ -73,7 +73,7 @@ export default function Cart() {
       <div>
         <Form
           onSubmit={submitForm}
-          className="p-6 bg-stone-200 w-80 h-auto mt-6 m-auto rounded-md shadow-xl md:w-1/2 md:m-auto"
+          className="p-6 backdrop-blur-sm w-80 h-auto mt-6 m-auto rounded-md shadow-xl md:w-1/2 md:m-auto"
         >
           <div>
             <label

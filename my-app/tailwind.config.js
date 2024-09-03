@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       colors: {
         "luxury-gold": "#D4AF37",
+        "luxury-gold-hover":"#D4AF37"
         
       },
     },

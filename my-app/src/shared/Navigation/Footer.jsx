@@ -12,7 +12,7 @@ export default function Footer() {
             <div className="w-full footer-container fixed bottom-0 left-0 right-0 flex justify-evenly backdrop-blur-sm">
 
                 <NavLink
-                    to="products/cart"
+                    to=""
                     className={({ isActive }) =>
                         ` flex  flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold text-white hover:text-black ${isActive
                             ? 'bg-gray-200 text-custom-blue'
