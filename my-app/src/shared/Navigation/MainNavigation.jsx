@@ -13,7 +13,7 @@ export default function MainNavigation() {
   // fixed top-0 left-0 right-0 z-50
 
   return (
-    <header className="w-full px-4 py-3 bg-white bg-opacity-80 backdrop-blur-sm  shadow-md transition-all duration-300 ease-in-out">
+    <header className="w-full px-4 py-3 fixed top-0 left-0 right-0 z-50 bg-white bg-opacity-10 backdrop-blur-sm  shadow-md transition-all duration-300 ease-in-out">
       <div className="max-w-7xl mx-auto">
         <ul className="flex flex-wrap justify-between items-center">
           <li>
@@ -25,7 +25,7 @@ export default function MainNavigation() {
             <NavLink
               to="products/cart"
               className={({ isActive }) =>
-                `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold ${isActive
+                `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold text-white hover:text-black  ${isActive
                   ? 'bg-gray-200 text-black'
                   : 'text-gray-600 hover:bg-luxury-gold hover:text-black'
                 }`
@@ -37,7 +37,7 @@ export default function MainNavigation() {
             <NavLink
               to="products/cart"
               className={({ isActive }) =>
-                `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold ${isActive
+                `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold  text-white hover:text-black  ${isActive
                   ? 'bg-gray-200 text-custom-blue'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-custom-blue'
                 }`
@@ -51,7 +51,7 @@ export default function MainNavigation() {
             <Form action="/logout" method="post">
               <button
                 type="submit"
-                className="flex flex-col  items-center px-3 py-2 rounded-lg bg-custom-red  hover:bg-luxury-gold transition-colors duration-200"
+                className="flex flex-col  items-center px-3 py-2 rounded-lg bg-custom-red  hover:bg-luxury-gold transition-colors duration-200  text-white hover:text-black  "
               >
                 <FiLogOut className="h-5 w-5 mb-1" />
                 <span className="text-xs">Logout</span>
@@ -62,7 +62,7 @@ export default function MainNavigation() {
             <NavLink
               to="products/cart"
               className={({ isActive }) =>
-                `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold${isActive
+                `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold  text-white hover:text-black  ${isActive
                   ? 'bg-gray-200 text-custom-blue'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-custom-blue'
                 }`

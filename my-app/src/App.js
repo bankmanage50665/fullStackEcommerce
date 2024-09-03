@@ -24,6 +24,7 @@ import {
   checkAuthLoader,
 } from "./middleware/getToken";
 import LoginWith from "./components/LoginWith";
+import Home from "./shared/component/Home";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
     loader: getTokenLoader,
     id: "token",
     children: [
-      { index: true, element: <h1>Home page </h1> },
+      { index: true, element: <Home/> },
       { path: "about", element: <h1>About page</h1> },
       { path: "signup", element: <Signup /> },
 
