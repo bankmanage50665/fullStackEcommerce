@@ -12,7 +12,7 @@ export function loader() {
 export function checkAuthLoader() {
   const token = getToken();
   if (!token) {
-    return redirect("/signup");
+    return redirect("/login");
   }
   return null;
 }

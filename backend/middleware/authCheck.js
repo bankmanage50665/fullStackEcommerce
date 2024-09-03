@@ -19,4 +19,4 @@ module.exports = function authCheck(req, res, next) {
     console.error("JWT verification failed:", err);
     return next(new HttpError("Failed to verify JWT.", 401));
   }
-};
+}; 

@@ -12,7 +12,7 @@ const orderModal = new Schema({
   items: [
     {
       name: { type: String, required: true },
-      image: { type: String, required: true },
+      image: [{ type: String, required: true }],
       brand: { type: String, required: true },
       category: { type: String, required: true },
       material: { type: String, required: true },
@@ -20,6 +20,7 @@ const orderModal = new Schema({
       quantity: { type: String, required: true },
     },
   ],
+  creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });
 
 const Order = mongoose.model("Order", orderModal);

@@ -23,6 +23,7 @@ import {
   loader as getTokenLoader,
   checkAuthLoader,
 } from "./middleware/getToken";
+import LoginWith from "./components/LoginWith";
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,8 @@ const router = createBrowserRouter([
       { path: "about", element: <h1>About page</h1> },
       { path: "signup", element: <Signup /> },
 
-      { path: "login", element: <Login /> },
+      { path: "login", element: <LoginWith /> },
+      { path: "dasbord", element: <h1>Dasboard</h1> },
       {
         path: "products",
         element: <ProductLayout />,

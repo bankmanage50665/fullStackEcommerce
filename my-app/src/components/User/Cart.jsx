@@ -1,10 +1,8 @@
 import { useContext } from "react";
 import CartContext from "../../context/CartContext";
-import { Link, useNavigate, json, Form } from "react-router-dom";
-import useHttpHooks from "../../hooks/useHttpHook";
+import { useNavigate, json, Form } from "react-router-dom";
 export default function Cart() {
   const { items, addToCart, removeFromCart } = useContext(CartContext);
-  const { sendRequest } = useHttpHooks();
   const navigate = useNavigate();
 
   const submitForm = async (e) => {
@@ -12,15 +10,17 @@ export default function Cart() {
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
 
+    console.log(items);
+
     try {
-      const resData = await sendRequest(
-        "http://localhost/orders/place",
-        "POST",
-        JSON.stringify({ userData, items }),
-        {
+      const res = await fetch("http://localhost/orders/place", {
+        method: "POST",
+        body: JSON.stringify({ userData, items }),
+        headers: {
           "Content-Type": "application/json",
-        }
-      );
+        },
+      });
+      const resData = await res.json();
       console.log(resData);
       navigate("/order");
     } catch (err) {
