@@ -9,8 +9,11 @@ import { MdOutlineAdminPanelSettings } from "react-icons/md";
 export default function MainNavigation() {
   const token = useRouteLoaderData("token");
 
+
+  // fixed top-0 left-0 right-0 z-50
+
   return (
-    <header className="w-full px-4 py-3 bg-white bg-opacity-80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 shadow-md transition-all duration-300 ease-in-out">
+    <header className="w-full px-4 py-3 bg-white bg-opacity-80 backdrop-blur-sm  shadow-md transition-all duration-300 ease-in-out">
       <div className="max-w-7xl mx-auto">
         <ul className="flex flex-wrap justify-between items-center">
           <li>
