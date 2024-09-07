@@ -1,8 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const placeController = require("../../controller/order_controller");
+const orderController = require("../../controller/order_controller");
+const authCheck = require("../../middleware/authCheck")
 
-router.post("/place", placeController.placeOrder);
-router.get("/get", placeController.getOrders);
+
+router.get("/get", orderController.getOrders);
+router.get("/:id", orderController.userOrderByUserId);
+
+
+router.use(authCheck)
+router.post("/place", orderController.placeOrder);
+router.patch("/:id", orderController.updateOrder)
+router.delete("/:id", orderController.deleteOrder)
 
 module.exports = router;

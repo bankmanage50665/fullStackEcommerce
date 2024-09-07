@@ -8,8 +8,8 @@ const productSchema = new Schema({
   image: { type: Array, requird: true },
   brand: { type: String, requird: true },
   category: { type: String, requird: true },
-  price: { type: String, requird: true },
-  material: { type: String, requird: true },
+  price: { type: Number, requird: true },
+  creator: {type: mongoose.Types.ObjectId, ref: "User"}
 });
 
 const Product = mongoose.model("Product", productSchema);

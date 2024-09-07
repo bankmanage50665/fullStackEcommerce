@@ -1,8 +1,21 @@
+const { default: mongoose } = require("mongoose");
+const fs = require("fs");
+
+const User = require("../modal/user_modal");
 const Product = require("../modal/product_modal");
 const HttpError = require("../utils/errorModal");
+const { validationResult } = require("express-validator");
 
 async function createProduct(req, res, next) {
-  const { name, description, brand, category, material } = req.body;
+  const err = validationResult(req);
+
+  if (!err.isEmpty) {
+    return next(new HttpError("Invalid inputs creditentials", 422));
+  }
+
+  const { name, description, brand, category, price, creator } = req.body;
+
+  console.log(req.userData);
 
   const createdProduct = new Product({
     name,
@@ -10,10 +23,33 @@ async function createProduct(req, res, next) {
     image: req.files.map((file) => file.path),
     brand,
     category,
-    material,
+    price,
+    creator,
   });
 
+  let findProductCreatorUser;
   try {
+    findProductCreatorUser = await User.findById(creator);
+  } catch (err) {
+    return next(
+      new HttpError(
+        "Field to find user that create product by creator id.",
+        500
+      )
+    );
+  }
+
+  if (!findProductCreatorUser) {
+    return next(new HttpError("Couldn't  find user creator id.", 500));
+  }
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdProduct.save({ session: sess });
+    findProductCreatorUser.products.push(createdProduct);
+    await findProductCreatorUser.save({ session: sess });
+    await sess.commitTransaction();
     await createdProduct.save();
   } catch (err) {
     return next(
@@ -47,7 +83,7 @@ async function productDetail(req, res, next) {
 
 async function editProducts(req, res, next) {
   const productId = req.params.id;
-  const { name, description, price, image, brand, category } = req.body;
+  const { name, description, price, brand, category } = req.body;
 
   let findProduct;
   try {
@@ -59,7 +95,6 @@ async function editProducts(req, res, next) {
   findProduct.name = name;
   findProduct.description = description;
   findProduct.price = price;
-  findProduct.image = image;
   findProduct.brand = brand;
   findProduct.category = category;
 
@@ -75,4 +110,51 @@ async function editProducts(req, res, next) {
   res.json({ message: "Product update sucessfully.", findProduct });
 }
 
-module.exports = { createProduct, getAllProducts, productDetail, editProducts };
+async function deleteProducts(req, res, next) {
+  const productId = req.params.id;
+
+  let product;
+  try {
+    product = await Product.findById(productId);
+  } catch (err) {
+    return next(new HttpError("Field to find product for deleteing", 500));
+  }
+
+  if (!product) {
+    return next(
+      new HttpError("Product not found on database for deleteing.", 404)
+    );
+  }
+
+  console.log(product);
+
+  // const user = await User.findById(product.creator);
+
+  // console.log(user);
+
+   product.image.forEach((file) =>
+    fs.unlink(file, (err) => {
+       console.log(err);
+     })
+   );
+
+  try {
+  
+
+    await product.deleteOne();
+  } catch (err) {
+    return next(new HttpError("Field to delete product", 500));
+  }
+
+  res.json({ message: "Product delete sucessfully" });
+
+
+  
+}
+module.exports = {
+  createProduct,
+  getAllProducts,
+  productDetail,
+  editProducts,
+  deleteProducts,
+};

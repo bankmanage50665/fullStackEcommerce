@@ -1,8 +1,10 @@
-import { useLoaderData } from "react-router-dom";
+import { json, useLoaderData } from "react-router-dom";
 
 export default function PlaceOrder() {
   const data = useLoaderData();
   const { orders } = data;
+
+  console.log(orders)
   return (
     <>
       (
@@ -34,14 +36,25 @@ export default function PlaceOrder() {
           </li>
         ))}
       </ul>
+
       )
     </>
   );
 }
 
 export async function loader({ req, params }) {
-  const res = await fetch("http://localhost:80/orders/get");
-  const resData = await res.json();
 
-  return resData;
+  try {
+    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/get`);
+    const resData = await res.json();
+
+    if (!res.ok) {
+      throw new Error(resData.message)
+    }
+    return resData;
+
+  } catch (err) {
+    throw json({ message: "Field to load user orders, Please try again later." }, { status: 500 })
+  }
+
 }

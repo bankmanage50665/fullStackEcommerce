@@ -1,50 +1,99 @@
+import { useState } from "react";
+
 import {
   Form,
+  json,
   useNavigate,
   useParams,
   useRouteLoaderData,
 } from "react-router-dom";
-import useHttpHooks from "../../hooks/useHttpHook";
 
 export default function EditProducts() {
-  const { sendRequest } = useHttpHooks();
+  const [isSubmiting, setIsSubmiting] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+
   const product = useRouteLoaderData("product");
   const token = useRouteLoaderData("token");
   const navigate = useNavigate();
   const findProduct = product.findProduct;
   const sp = useParams().id;
 
-  console.log(token);
+
   const submitForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
 
-    const response = await fetch(`http://localhost:80/products/${sp}`, {
-      method: "PATCH",
-      body: JSON.stringify(userData),
+    try {
+      setIsSubmiting(true)
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/products/${sp}`, {
+        method: "PATCH",
+        body: JSON.stringify(userData),
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-    });
-    const data = await response.json();
-    console.log(data);
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      });
+      const data = await response.json();
+      console.log(data);
+
+      if (!response.ok) {
+        throw new Error(data.message)
+      }
+
+
+    } catch (err) {
+      setIsSubmiting(false)
+      throw json({ message: "Field to update product, Please try again later." }, { status: 404 })
+    }
 
     navigate("/products");
+    setIsSubmiting(false)
+
   };
+
+
+  async function handleDeleteProduct() {
+
+    try {
+      setIsDeleting(true)
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/products/${sp}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+
+
+      });
+
+      const resData = await response.json()
+
+
+    } catch (err) {
+      setIsDeleting(false)
+      throw json({ message: "Field to update product, Please try again later." }, { status: 404 })
+    }
+
+    navigate("/products");
+    setIsDeleting(false)
+
+  }
 
   return (
     <>
+
+
       <Form
         onSubmit={submitForm}
-        className="p-6 bg-stone-200 w-80 h-auto mt-6 m-auto rounded-md shadow-xl md:w-1/2 md:m-auto"
+        className="p-8 bg-white w-80 h-auto mt-6 m-auto rounded-lg shadow-2xl md:w-1/2 md:m-auto"
       >
+        {/* Name Field */}
         <div>
           <label
             htmlFor="name"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
+            className="block mb-2 text-lg font-semibold text-gray-800"
           >
             Name
           </label>
@@ -52,14 +101,16 @@ export default function EditProducts() {
             name="name"
             type="text"
             id="name"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            className="block w-full rounded-md p-2 mb-4 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
             defaultValue={findProduct ? findProduct.name : null}
           />
         </div>
+
+        {/* Description Field */}
         <div>
           <label
             htmlFor="description"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
+            className="block mb-2 text-lg font-semibold text-gray-800"
           >
             Description
           </label>
@@ -67,29 +118,18 @@ export default function EditProducts() {
             name="description"
             type="text"
             id="description"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            className="block w-full rounded-md p-2 mb-4 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
             defaultValue={findProduct ? findProduct.description : null}
           />
         </div>
-        <div>
-          <label
-            htmlFor="image"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
-          >
-            Image
-          </label>
-          <input
-            name="image"
-            type="text"
-            id="image"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-            defaultValue={findProduct ? findProduct.image : null}
-          />
-        </div>
+
+
+
+        {/* Brand Field */}
         <div>
           <label
             htmlFor="brand"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
+            className="block mb-2 text-lg font-semibold text-gray-800"
           >
             Brand
           </label>
@@ -97,29 +137,16 @@ export default function EditProducts() {
             name="brand"
             type="text"
             id="brand"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            className="block w-full rounded-md p-2 mb-4 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
             defaultValue={findProduct ? findProduct.brand : null}
           />
         </div>
-        <div>
-          <label
-            htmlFor="material"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
-          >
-            Material
-          </label>
-          <input
-            name="material"
-            type="text"
-            id="material"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-            defaultValue={findProduct ? findProduct.material : null}
-          />
-        </div>
+
+        {/* Category Field */}
         <div>
           <label
             htmlFor="category"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
+            className="block mb-2 text-lg font-semibold text-gray-800"
           >
             Category
           </label>
@@ -127,16 +154,34 @@ export default function EditProducts() {
             name="category"
             type="text"
             id="category"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
+            className="block w-full rounded-md p-2 mb-4 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
             defaultValue={findProduct ? findProduct.category : null}
           />
         </div>
-        <div>
-          <button className="px-4 py-1 bg-stone-400 rounded-md hover:font-bold hover:bg-stone-950 hover:text-white">
-            Submit
+
+        {/* Submit Button */}
+        <div className="flex justify-center">
+          <button
+            disabled={isSubmiting}
+            className="px-6 py-2 bg-indigo-600 text-white rounded-md shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all duration-300 ease-in-out font-semibold"
+          >
+            {isSubmiting ? "Updating..." : "Update"}
           </button>
         </div>
       </Form>
+
+      {/* Delete Button */}
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={handleDeleteProduct}
+          disabled={isDeleting}
+          className="px-6 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 hover:shadow-lg transition-all duration-300 ease-in-out font-semibold"
+        >
+          {isDeleting ? "Deleteing..." : "Delete"}
+        </button>
+      </div>
+
+
     </>
   );
 }

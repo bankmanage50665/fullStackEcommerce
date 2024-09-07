@@ -1,22 +1,23 @@
 import {
+  json,
   Link,
   useLoaderData,
-  useNavigation,
-  useRouteLoaderData,
 } from "react-router-dom";
 import CartContaxt from "../../context/CartContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { userId } from "../../middleware/getToken";
 
-//
+
 
 export default function Products() {
   const { addToCart } = useContext(CartContaxt);
-  const navigation = useNavigation();
-  const isLoading = navigation.state === "loading";
   const products = useLoaderData();
-  const token = useRouteLoaderData("token");
+  const userid = userId()
+
+
+
 
   function handleAddToCart(product) {
     addToCart(product);
@@ -24,48 +25,57 @@ export default function Products() {
 
   return (
     <>
-      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4">
+      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4">
         {products &&
           products.allProduct.map((product) => (
             <li
               key={product.id}
-              className="flex flex-col rounded-md shadow-md bg-white overflow-hidden"
+              className="flex flex-col rounded-lg shadow-lg bg-white  overflow-hidden transition-all duration-300 transform hover:scale-105"
             >
+              {/* Image Carousel */}
               <Carousel
                 autoplay
                 infiniteLoop
                 showStatus={false}
                 showThumbs={false}
+                className="w-full"
               >
                 {product.image.map((img) => (
                   <img
-                    src={`http://localhost:80/${img}`}
-                    className="w-full object-cover h-48 sm:h-64 lg:h-80"
+                    src={`${process.env.REACT_APP_BACKEND_URL}/${img}`}
+                    className="w-full object-cover h-full sm:h-64 lg:h-80"
                     alt={product.name}
                   />
                 ))}
               </Carousel>
-              <div className="flex flex-col p-4">
-                <h2 className="text-lg font-semibold">{product.name}</h2>
-                <p className="text-sm mb-2">{product.description}</p>
+
+              {/* Product Info */}
+              <div className="flex flex-col p-6 bg-gradient-to-r from-indigo-900 via-purple-900 to-blue-900 text-white space-y-4">
+                <h2 className="text-xl font-semibold leading-tight">{product.name}</h2>
+                <p className="text-sm line-clamp-3">{product.description}</p>
+                <p className="text-2xl font-bold">₹ {product.price}</p>
+
+                {/* Buttons and Links */}
                 <div className="flex items-center justify-between mt-auto">
                   <Link
                     to={`${product._id}`}
-                    className="text-blue-500 underline hover:text-blue-700"
+                    className="text-sm px-4 py-2 bg-gray-50 text-indigo-900 font-semibold rounded-lg hover:bg-gray-100 hover:text-indigo-700 transition-all duration-300"
                   >
                     View Product
                   </Link>
-                  {token && (
-                    <Link
-                      to={`${product._id}/edit`}
-                      className="text-blue-500 underline hover:text-blue-700"
-                    >
-                      Edit Product
-                    </Link>
-                  )}
+
+                  {product.creator === userid && <Link
+                    to={`${product._id}/edit`}
+                    className="text-sm text-yellow-400 font-medium underline hover:text-yellow-300 transition-all duration-300"
+                  >
+                    Edit Product
+                  </Link>}
+
+
+
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="px-4 py-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 focus:outline-none"
+                    className="px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-600 transition-all duration-300"
                   >
                     Add to Cart
                   </button>
@@ -74,12 +84,32 @@ export default function Products() {
             </li>
           ))}
       </ul>
+
     </>
   );
 }
 
-export async function loader(req, res) {
-  const response = await fetch("http://localhost/products/getAllProducts");
-  const resData = await response.json();
-  return resData;
+export async function loader() {
+
+  try {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/products/getAllProducts`);
+    const resData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(resData.message)
+    }
+    const products = resData.allProduct
+    const creatorId = products &&
+      products.length >= 1 && products.map((product) => product.creator);
+
+
+    localStorage.setItem("creatorid", creatorId)
+    return resData
+
+
+
+  } catch (err) {
+    throw json({ message: "Field to fetch products list please try again later." }, { status: 500 })
+  }
+
 }

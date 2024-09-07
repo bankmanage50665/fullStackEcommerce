@@ -1,20 +1,15 @@
+import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import RootLayout from "./shared/Navigation/RootLayout";
-import Signup from "./components/Signup";
-import Login from "./components/Login";
 import Products, {
   loader as productLoader,
 } from "./components/Product/Products";
-// import ProductsEdit from "./components/Product/ProductsEdit";
-import AddProducts from "./components/Product/AddProducts";
-import ProductLayout from "./shared/Navigation/ProductLayout";
 import ProductItem, {
   loader as productDetailLoader,
 } from "./components/Product/ProductItem";
 import EditProducts from "./components/Product/EditProducts";
 import { CartContextProvider } from "./context/CartContext";
-import Cart from "./components/User/Cart";
 import PlaceOrder, {
   loader as getProductLoader,
 } from "./components/User/placeOrder";
@@ -23,45 +18,71 @@ import {
   loader as getTokenLoader,
   checkAuthLoader,
 } from "./middleware/getToken";
-import Home from "./shared/component/Home";
+import Checkout from "./components/User/Checkout";
+import UserOrders, {
+  loader as userOrdersLoader,
+} from "./components/User/UserOrder";
+import GetAllUsers, {
+  loader as allUserDetailLoader,
+} from "./components/Admin/GetAllUsers";
+import UserOrderDetailsForAdmin, {
+  loader as userOrderDetailsForAdminLoader,
+} from "./components/Admin/UserOrderDetailsForAdmin";
+import AdminLayout from "./components/Admin/shared/Navigation/AdminLayout";
+import Error from "./shared/component/Error";
+import { Suspense } from "react";
+
+const Signup = React.lazy(() => import("./components/Signup"));
+const Login = React.lazy(() => import("./components/Login"));
+const Cart = React.lazy(() => import("./components/User/Cart"));
+const AddProducts = React.lazy(() =>
+  import("./components/Product/AddProducts")
+);
 
 const router = createBrowserRouter([
   {
     path: "",
     element: <RootLayout />,
+    errorElement: <Error />,
     loader: getTokenLoader,
     id: "token",
     children: [
-      { index: true, element: <Home /> },
-      { path: "about", element: <h1>About page</h1> },
-      { path: "signup", element: <Signup /> },
+      { index: true, element: <Products />, loader: productLoader },
+      {
+        path: "signup",
+        element: (
+          <Suspense fallback={<p>Loading...</p>}>
+            <Signup />
+          </Suspense>
+        ),
+      },
 
-      { path: "login", element: <Login /> },
-      { path: "dasbord", element: <h1>Dasboard</h1> },
+      {
+        path: "login",
+        element: (
+          <Suspense fallback={<p>Loading...</p>}>
+            <Login />
+          </Suspense>
+        ),
+      },
       {
         path: "products",
-        element: <ProductLayout />,
 
         children: [
           {
             index: true,
-            element: (
-              <CartContextProvider>
-                <Products />
-              </CartContextProvider>
-            ),
+            element: <Products />,
             loader: productLoader,
           },
           {
             path: "cart",
             element: (
-              <CartContextProvider>
+              <Suspense fallback={<p>Loading...</p>}>
                 <Cart />
-              </CartContextProvider>
+              </Suspense>
             ),
           },
 
-          { path: "add", element: <AddProducts />, loader: checkAuthLoader },
           {
             path: ":id",
             loader: productDetailLoader,
@@ -70,16 +91,19 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <ProductItem />,
-                loader: checkAuthLoader,
               },
               {
                 path: "edit",
                 element: <EditProducts />,
-                loader: checkAuthLoader,
               },
             ],
           },
         ],
+      },
+      {
+        path: "checkout",
+        element: <Checkout />,
+        loader: checkAuthLoader,
       },
       {
         path: "order",
@@ -87,12 +111,43 @@ const router = createBrowserRouter([
         loader: getProductLoader,
       },
       { path: "logout", action: logoutAction },
+      { path: "orders", element: <UserOrders />, loader: userOrdersLoader },
+
+      {
+        path: "admin",
+        element: <AdminLayout />,
+        loader: checkAuthLoader,
+        children: [
+          {
+            index: true,
+            element: <GetAllUsers />,
+            loader: allUserDetailLoader,
+          },
+          { path: "add", element: <AddProducts /> },
+          {
+            path: ":id",
+            children: [
+              {
+                index: true,
+                element: <UserOrderDetailsForAdmin />,
+                loader: userOrderDetailsForAdminLoader,
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <CartContextProvider>
+        <RouterProvider router={router} />
+      </CartContextProvider>
+    </>
+  );
 }
 
 export default App;

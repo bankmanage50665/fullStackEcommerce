@@ -2,24 +2,25 @@ import { createContext, useReducer } from "react";
 
 const CartContext = createContext({
   items: [],
-  addToCart: (items) => {},
-  removeFromCart: (id) => {},
+  addToCart: (items) => { },
+  removeFromCart: (id) => { }
 });
 
 function cartReducer(state, action) {
   if (action.type === "ADD_TO_CART") {
-    const exestingItemsIndex = state.items.findIndex(
-      (items) => items.id === action.items.id
+    const cartItemIndex = state.items.findIndex(
+      (item) => item._id === action.items._id
     );
     const updatedItems = [...state.items];
+    if (cartItemIndex > -1) {
+      const existingItem = state.items[cartItemIndex];
 
-    if (exestingItemsIndex > -1) {
-      const existingItem = state.items[exestingItemsIndex];
       const updatedItem = {
         ...existingItem,
         quantity: existingItem.quantity + 1,
       };
-      updatedItems[exestingItemsIndex] = updatedItem;
+
+      updatedItems[cartItemIndex] = updatedItem;
     } else {
       updatedItems.push({ ...action.items, quantity: 1 });
     }
@@ -30,21 +31,22 @@ function cartReducer(state, action) {
     };
   }
   if (action.type === "REMOVE_FROM_CART") {
-    const exestingItemsIndex = state.items.findIndex(
-      (item) => item.id === action.id
+    const cartItemIndex = state.items.findIndex(
+      (item) => item._id === action.id
     );
-    const existingItem = state.items[exestingItemsIndex];
+    const existingItem = state.items[cartItemIndex];
     const updatedItems = [...state.items];
 
     if (existingItem.quantity === 1) {
-      updatedItems.splice(exestingItemsIndex, 1);
+      updatedItems.splice(cartItemIndex, 1);
     } else {
       const updatedItem = {
         ...existingItem,
         quantity: existingItem.quantity - 1,
       };
-      updatedItems[exestingItemsIndex] = updatedItem;
+      updatedItems[cartItemIndex] = updatedItem;
     }
+
     return {
       ...state,
       items: updatedItems,
@@ -55,23 +57,19 @@ function cartReducer(state, action) {
 }
 
 export function CartContextProvider({ children }) {
-  const initialState = {
-    items: [],
-  };
-
-  const [cart, dispatch] = useReducer(cartReducer, initialState);
+  const [cart, dispatchAction] = useReducer(cartReducer, { items: [] });
 
   function addToCart(items) {
-    dispatch({ type: "ADD_TO_CART", items });
+    dispatchAction({ type: "ADD_TO_CART", items });
   }
+
   function removeFromCart(id) {
-    dispatch({ type: "REMOVE_FROM_CART", id });
+    dispatchAction({ type: "REMOVE_FROM_CART", id });
   }
 
-  const cartCtr = { items: cart.items, addToCart, removeFromCart };
-
+  const ctxValue = { items: cart.items, addToCart, removeFromCart };
   return (
-    <CartContext.Provider value={cartCtr}>{children}</CartContext.Provider>
+    <CartContext.Provider value={ctxValue}>{children}</CartContext.Provider>
   );
 }
 

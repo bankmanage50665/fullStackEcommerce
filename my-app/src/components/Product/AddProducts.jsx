@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { useState } from "react";
 import ImageUpload from "../../shared/ImageUpload";
+import { userId } from "../../middleware/getToken"
 
 export default function Signup() {
   const [files, setFiles] = useState([]);
@@ -13,14 +14,23 @@ export default function Signup() {
   const isSubmiting = navigation.state === "submitting";
   const navigate = useNavigate();
   const token = useRouteLoaderData("token");
+  const userid = userId()
+
+
+  console.log(userid)
 
   function handleGetImg(img) {
     setFiles(img);
   }
+
+
+
+
   const submitForm = async (e) => {
     e.preventDefault();
     const productData = e.target.elements;
-    console.log(productData.name.value);
+
+
 
     try {
       const formData = new FormData();
@@ -28,42 +38,48 @@ export default function Signup() {
       formData.append("description", productData.description.value);
       formData.append("price", productData.price.value);
       formData.append("brand", productData.brand.value);
-      formData.append("material", productData.material.value);
       formData.append("category", productData.category.value);
+      formData.append("creator", userid)
       files.forEach((files) => formData.append("image", files));
-      console.log(formData);
-      console.log(productData.name.value);
-      const res = await fetch("http://localhost:80/products/add", {
+
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/products/add`, {
         method: "POST",
         body: formData,
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: `Bearer ${token}`, // Include the authentication token
         },
+
       });
       const resData = await res.json();
       console.log(resData);
 
-      navigate("/products");
-    } catch (err) {}
+
+    } catch (err) { }
+
+
+
+
+    navigate("/products");
   };
 
   return (
     <>
       <Form
         onSubmit={submitForm}
-        className="p-6 bg-stone-200 w-80 h-auto mt-6 m-auto rounded-md shadow-xl md:w-1/2 md:m-auto"
+        className="w-auto h-auto p-6 bg-stone-200  mt-6 m-auto rounded-md shadow-xl"
       >
         <div>
           <label
             htmlFor="name"
             className="block items-center mb-2 text-center font-semibold text-slate-950"
           >
-            Name
+            Product  Name
           </label>
           <input
             name="name"
             type="text"
             id="name"
+            required
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
@@ -78,6 +94,7 @@ export default function Signup() {
             name="description"
             type="text"
             id="description"
+            required
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
@@ -93,6 +110,7 @@ export default function Signup() {
             name="price"
             type="number"
             id="price"
+            required
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
@@ -107,23 +125,11 @@ export default function Signup() {
             name="brand"
             type="text"
             id="brand"
+            required
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
-        <div>
-          <label
-            htmlFor="material"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
-          >
-            material
-          </label>
-          <input
-            name="material"
-            type="text"
-            id="material"
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-          />
-        </div>
+
         <div>
           <label
             htmlFor="category"
@@ -135,12 +141,13 @@ export default function Signup() {
             name="category"
             type="text"
             id="category"
+            required
             className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
           />
         </div>
         <ImageUpload onChangeImages={handleGetImg} />
 
-        <div>
+        <div className="mb-20">
           <button
             disabled={isSubmiting}
             className="px-4 py-1 bg-stone-400 rounded-md hover:font-bold hover:bg-stone-950 hover:text-white"

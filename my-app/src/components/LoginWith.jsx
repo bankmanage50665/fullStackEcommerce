@@ -16,15 +16,15 @@
 
 
 
-export default function LoginWith() {
+// export default function LoginWith() {
 
-    function handleLogin() {
-        window.open(`http://localhost:80/auth/google/callback`, "_self")
-    }
+//     function handleLogin() {
+//         window.open(`http://localhost:80/auth/google/callback`, "_self")
+//     }
 
-    return <>
-        <button onClick={handleLogin}>Continue with google</button>
+//     return <>
+//         <button onClick={handleLogin}>Continue with google</button>
 
-    </>
-}
+//     </>
+// }
 

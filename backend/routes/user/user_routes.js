@@ -1,9 +1,27 @@
-// const express = require("express");
-// const router = express.Router();
-// const userController = require("../../controller/userController");
-// const fileUpload = require("../../utils/imageUpload");
+const express = require("express");
+const router = express.Router();
 
-// router.post("/signup", fileUpload.any("image", 12), userController.signup);
-// router.post("/login", userController.login);
+const { check } = require("express-validator");
 
-// module.exports = router;
+
+const userController = require("../../controller/userController");
+
+router.post(
+  "/signup",
+  [
+    check("name").not().isEmpty(),
+    check("email").normalizeEmail().isEmail(),
+    check("password").isLength({ min: 5 }),
+  ],
+  userController.signup
+);
+router.post(
+  "/login",
+  [
+    check("email").normalizeEmail().isEmail(),
+    check("password").isLength({ min: 5 }),
+  ],
+  userController.login
+);
+
+module.exports = router;

@@ -5,8 +5,12 @@ module.exports = {
     extend: {
       colors: {
         "luxury-gold": "#D4AF37",
-        "luxury-gold-hover":"#D4AF37"
-        
+        "luxury-gold-hover": "#D4AF37",
+        "luxury-gold-active": "#D4AF37",
+        "luxury-gold-disabled": "#D4AF37",
+        "luxury-gold-gredient-from": "#BF954F",
+        "luxury-gold-gredient-via": "#FCF6BA",
+        "luxury-gold-gredient-to": "#AA771C",
       },
     },
   },

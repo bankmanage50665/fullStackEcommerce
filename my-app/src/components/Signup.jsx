@@ -1,115 +1,128 @@
-import { Form, useNavigate, useNavigation } from "react-router-dom";
+import { Form, json, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-import { MdDriveFileRenameOutline } from "react-icons/md";
-import { MdOutlineEmail } from "react-icons/md";
-import { RiLockPasswordLine } from "react-icons/ri";
+import { FaUser, FaEnvelope, FaLock, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
 
 
 
 
 export default function Signup() {
-  const [files, setFiles] = useState(null);
-  const navigation = useNavigation();
-  const isSubmiting = navigation.state === "submitting";
+  const [isSubmiting, setIsSubmiting] = useState(false)
   const navigate = useNavigate();
 
-  function handleGetFiles(files) {
-    setFiles(files);
-  }
+
 
   const submitForm = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    const formElements = e.target.elements;
+    const formData = new FormData(e.target);
+    const userData = Object.fromEntries(formData.entries())
+
 
     try {
-      formData.append("name", formElements.name.value);
-      formData.append("email", formElements.email.value);
-      formData.append("password", formElements.password.value);
-      files.forEach((file) => formData.append("image", file));
-      const res = await fetch("http://localhost:80/users/signup", {
+      setIsSubmiting(true)
+
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/signup`, {
         method: "POST",
-        body: formData,
+        body: JSON.stringify(userData),
+        headers: {
+          'Content-Type': "application/json"
+        }
       });
       const resData = await res.json();
-      console.log(resData)
-      localStorage.setItem("token", resData.token);
 
-      navigate("/login");
-    } catch (err) { }
+      localStorage.setItem("token", resData.token)
+
+      if (!res.ok) {
+        throw new Error(resData.message)
+      }
+
+
+      setIsSubmiting(false)
+    } catch (err) {
+      setIsSubmiting(false)
+      throw json({ message: "Field to signing up, please try again later." }, { status: 500 })
+    }
+    navigate("/login");
   };
   return (
     <>
-      <Form
-        onSubmit={submitForm}
-        className="p-6 backdrop-blur-2xl w-80 h-auto mt-6 m-auto rounded-md shadow-xl md:w-1/2 md:m-auto"
-      >
-        <div className="text-white items-center">
-          <label
-            htmlFor="name"
-            className="block items-center mb-2 text-center font-semibold text-white text-2xl"
-          >
-            Name
-          </label>
-          <div className="flex ">
-            <MdDriveFileRenameOutline className="text-white text-2xl" />
-            <input
-              name="name"
-              type="text"
-              placeholder="Enter Your Name"
-              id="name"
-              className="block items-center bg-transparent  text-white  w-full rounded-md p-1 mb-4 focus:bg-transparent focus:border-indigo-500 ml-5"
-            />
-          </div>
-        </div>
-        <div className="text-white items-center">
-          <label
-            htmlFor="email"
-            className="block items-center mb-2 text-center font-semibold text-white text-2xl"
-          >
-            Email
-          </label>
-          <div className="flex ">
-            <MdOutlineEmail className="text-white text-2xl" />
-            <input
-              name="email"
-              type="email"
-              placeholder="Enter Your E-mail"
-              id="email"
-              className="block items-center bg-transparent text-white  w-full rounded-md p-1 mb-4 focus:border-indigo-500 ml-5"
-            />
-          </div>
-        </div>
-        <div className="text-white items-center">
-          <label
-            htmlFor="password"
-            className="block items-center mb-2 text-center font-semibold text-white text-2xl"
-          >
-            Password
-          </label>
-          <div className="flex ">
-            <RiLockPasswordLine className="text-white text-2xl" />
-            <input
-              name="password"
-              type="password"
-              placeholder="Enter Your Password"
-              id="password"
-              className="block items-center bg-transparent text-white  w-full rounded-md p-1 mb-4 focus:border-indigo-500 ml-5"
-            />
-          </div>
-        </div>
 
-
-        <div>
-          <button
-            disabled={isSubmiting}
-            className="px-4 py-1 bg-luxury-gold hover:bg-luxury-gold-hover rounded-md hover:font-bold hover:text-white text-white"
-          >
-            {isSubmiting ? "Submiting" : "Submit"}
-          </button>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-900">
+        <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+          <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Sign Up</h2>
+          <Form method="post" className="space-y-6" onSubmit={submitForm}>
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaUser className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="John Doe"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaEnvelope className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="you@example.com"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaLock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+            <div>
+              <button
+                disabled={isSubmiting}
+                type="submit"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <FaUserPlus className="mr-2 h-5 w-5" />
+                {isSubmiting ? 'Signing up...' : 'Sign Up'}
+              </button>
+            </div>
+          </Form>
+          <p className="mt-8 text-sm text-center">
+            Already have an account?
+            <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <span className="flex items-center justify-center">
+                <FaSignInAlt className="mr-1" /> Login
+              </span>
+            </Link>
+          </p>
         </div>
-      </Form>
+      </div>
     </>
   );
 }
