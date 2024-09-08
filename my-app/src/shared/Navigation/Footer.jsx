@@ -40,24 +40,32 @@ export default function Footer() {
                     <span className="text-xs">Shop</span>
                 </NavLink>
 
+              
+
+
                 <NavLink
                     to="products/cart"
                     className={({ isActive }) =>
-                        `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold text-black hover:text-black ${isActive
+                        `relative flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold text-black hover:text-black ${isActive
                             ? 'bg-luxury-gold text-custom-blue'
                             : 'text-gray-600 hover:luxury-gold-hover hover:text-custom-blue'
                         }`
                     }
                     end
                 >
-                    <MdOutlineShoppingCart className="h-5 w-5 mb-1" />
-                    <span className="text-xs">Cart {items.length}</span>
+                    <div className="relative">
+                        <MdOutlineShoppingCart className="h-5 w-5 mb-1" />
+                        {items.length > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                                {items.length}
+                            </span>
+                        )}
+                    </div>
+                    <span className="text-xs">Cart</span>
                 </NavLink>
 
 
-
-
-                 <NavLink
+                <NavLink
                     to="orders"
                     className={({ isActive }) =>
                         `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold text-black hover:text-black ${isActive

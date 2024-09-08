@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { json, useRouteLoaderData } from "react-router-dom";
+import { json, useLoaderData, useRouteLoaderData } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import carousel styles
 import { MdCurrencyRupee } from "react-icons/md";
@@ -12,7 +12,7 @@ import VerticleDescription from "./VerticleDescription";
 
 export default function ProductDetail() {
   const { addToCart } = useContext(CartContext)
-  const product = useRouteLoaderData("product");
+  const product = useLoaderData()
   const findProduct = product.findProduct;
 
   console.log(findProduct)

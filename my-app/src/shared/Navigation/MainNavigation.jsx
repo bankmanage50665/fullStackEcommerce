@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink, Link, Form, useRouteLoaderData } from "react-router-dom";
 
 
@@ -8,10 +8,17 @@ import { MdLogin } from "react-icons/md";
 import { SiGnuprivacyguard } from "react-icons/si";
 import { FiLogOut } from "react-icons/fi";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
-import {  userId, getCreatorId } from '../../middleware/getToken';
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { userId, getCreatorId } from '../../middleware/getToken';
+import CartContext from '../../context/CartContext';
+import { getToken } from '../../middleware/getToken';
 
 export default function MainNavigation() {
-  const token = useRouteLoaderData("token");
+  // const token = useRouteLoaderData("token");
+  const { items } = useContext(CartContext)
+  const token = getToken()
+
+
 
   const creator = getCreatorId()
   const userid = userId()
@@ -36,6 +43,28 @@ export default function MainNavigation() {
               </Link>
             </li>
             <nav className="flex flex-wrap items-center space-x-1 sm:space-x-2 md:space-x-4">
+
+              <NavLink
+                to="products/cart"
+                className={({ isActive }) =>
+                  `relative flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold text-black hover:text-black ${isActive
+                    ? 'bg-luxury-gold text-custom-blue'
+                    : 'text-gray-600 hover:luxury-gold-hover hover:text-custom-blue'
+                  }`
+                }
+                end
+              >
+                <div className="relative">
+                  <MdOutlineShoppingCart className="h-5 w-5 mb-1" />
+                  {items.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                      {items.length}
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs">Cart</span>
+              </NavLink>
+
               {!token && <NavLink
                 to="signup"
                 className={({ isActive }) =>

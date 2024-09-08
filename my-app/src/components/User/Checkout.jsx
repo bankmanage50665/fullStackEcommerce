@@ -84,13 +84,15 @@ export default function Checkout() {
 
     }
 
+
+
     return <>
 
-        <div>
+        <div className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl" >
 
-            <div className="flex justify-between items-center mb-4 sm:mb-6">
-                <span className="text-gray-600 font-medium">Total:</span>
-                <span className="text-gray-800 font-bold text-xl sm:text-2xl">
+            <div className="flex justify-between items-center mb-8 border-b border-gray-700 pb-4">
+                <span className="text-gray-300 font-medium text-lg">Total:</span>
+                <span className="text-luxury-gold font-bold text-3xl">
                     {currencyFormatter.format(totalPrice)}
                 </span>
             </div>
@@ -233,70 +235,17 @@ export default function Checkout() {
                 </div>
 
                 <div>
-                    <button disabled={isSubmiting} className="px-4 py-1 bg-stone-400 rounded-md hover:font-bold hover:bg-stone-950 hover:text-white">
-                        {isSubmiting ? "Order Placeing..." : "Place order"}
+                    <button
+                        type="submit"
+                        disabled={isSubmiting}
+                        className="w-full bg-luxury-gold text-gray-900 font-bold py-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-luxury-gold-light disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isSubmiting ? "Placing Order..." : "Place Order"}
                     </button>
                 </div>
             </Form>
         </div>
 
-        {/* <div className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl">
-            <div className="flex justify-between items-center mb-8 border-b border-gray-700 pb-4">
-                <span className="text-gray-300 font-medium text-lg">Total:</span>
-                <span className="text-luxury-gold font-bold text-3xl">
-                    {currencyFormatter.format(totalPrice)}
-                </span>
-            </div>
-
-            <form onSubmit={handlePlaceOrder} className="space-y-6">
-                <InputField icon={<FiUser />} name="name" label="Name" type="text" required />
-                <InputField icon={<FiMail />} name="email" label="Email" type="email" required />
-                <InputField icon={<FiPhone />} name="phone" label="Phone Number" type="tel" required minLength={10} maxLength={10} />
-                <InputField icon={<FiMapPin />} name="city" label="City/Town" type="text" required />
-                <InputField icon={<FiMapPin />} name="pin" label="Pin Code" type="number" required minLength={6} maxLength={6} />
-
-                <div className="relative">
-                    <label htmlFor="address" className="text-gray-300 font-medium mb-2 block">Address</label>
-                    <div className="relative">
-                        <FiHome className="absolute top-3 left-3 text-gray-400" />
-                        <textarea
-                            name="address"
-                            id="address"
-                            required
-                            minLength={10}
-                            placeholder="House number, Street name or Ward number"
-                            className="w-full bg-gray-700 text-white rounded-lg py-2 px-10 focus:outline-none focus:ring-2 focus:ring-luxury-gold"
-                            rows={3}
-                        />
-                    </div>
-                </div>
-
-                <div className="relative">
-                    <label htmlFor="paymentMethod" className="text-gray-300 font-medium mb-2 block">Payment Method</label>
-                    <div className="relative">
-                        <FiCreditCard className="absolute top-3 left-3 text-gray-400" />
-                        <select
-                            id="paymentMethod"
-                            name="paymentMethod"
-                            className="w-full bg-gray-700 text-white rounded-lg py-2 px-10 appearance-none focus:outline-none focus:ring-2 focus:ring-luxury-gold"
-                            required
-                        >
-                            <option value="">Select payment method</option>
-                            <option value="cod">Cash On Delivery</option>
-                        </select>
-                        <FiChevronDown className="absolute top-3 right-3 text-gray-400" />
-                    </div>
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={isSubmiting}
-                    className="w-full bg-luxury-gold text-gray-900 font-bold py-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-luxury-gold-light disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {isSubmiting ? "Placing Order..." : "Place Order"}
-                </button>
-            </form>
-        </div> */}
-
+       
     </>
 }

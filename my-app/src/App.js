@@ -1,36 +1,27 @@
-import React from "react";
+import React, { lazy } from "react";
+import { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
+
+import { CartContextProvider } from "./context/CartContext";
+
+import { action as logoutAction } from "./middleware/logout";
 import RootLayout from "./shared/Navigation/RootLayout";
-import Products, {
-  loader as productLoader,
-} from "./components/Product/Products";
 import ProductItem, {
   loader as productDetailLoader,
 } from "./components/Product/ProductItem";
 import EditProducts from "./components/Product/EditProducts";
-import { CartContextProvider } from "./context/CartContext";
-import PlaceOrder, {
-  loader as getProductLoader,
-} from "./components/User/placeOrder";
-import { action as logoutAction } from "./middleware/logout";
+
 import {
   loader as getTokenLoader,
   checkAuthLoader,
 } from "./middleware/getToken";
-import Checkout from "./components/User/Checkout";
-import UserOrders, {
-  loader as userOrdersLoader,
-} from "./components/User/UserOrder";
-import GetAllUsers, {
-  loader as allUserDetailLoader,
-} from "./components/Admin/GetAllUsers";
+
 import UserOrderDetailsForAdmin, {
   loader as userOrderDetailsForAdminLoader,
 } from "./components/Admin/UserOrderDetailsForAdmin";
 import AdminLayout from "./components/Admin/shared/Navigation/AdminLayout";
 import Error from "./shared/component/Error";
-import { Suspense } from "react";
 
 const Signup = React.lazy(() => import("./components/Signup"));
 const Login = React.lazy(() => import("./components/Login"));
@@ -38,6 +29,11 @@ const Cart = React.lazy(() => import("./components/User/Cart"));
 const AddProducts = React.lazy(() =>
   import("./components/Product/AddProducts")
 );
+
+const Products = lazy(() => import("./components/Product/Products"));
+const UserOrders = lazy(() => import("./components/User/UserOrder"));
+const GetAllUsers = lazy(() => import("./components/Admin/GetAllUsers"));
+const Checkout = lazy(() => import("./components/User/Checkout"));
 
 const router = createBrowserRouter([
   {
@@ -47,7 +43,18 @@ const router = createBrowserRouter([
     loader: getTokenLoader,
     id: "token",
     children: [
-      { index: true, element: <Products />, loader: productLoader },
+      {
+        index: true,
+        element: (
+          <Suspense fallback={<div className="center">Loading...</div>}>
+            <Products />
+          </Suspense>
+        ),
+        loader: () =>
+          import("./components/Product/Products").then((module) =>
+            module.loader()
+          ),
+      },
       {
         path: "signup",
         element: (
@@ -71,8 +78,15 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Products />,
-            loader: productLoader,
+            element: (
+              <Suspense fallback={<div className="center">Loading...</div>}>
+                <Products />
+              </Suspense>
+            ),
+            loader: () =>
+              import("./components/Product/Products").then((module) =>
+                module.loader()
+              ),
           },
           {
             path: "cart",
@@ -91,6 +105,7 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <ProductItem />,
+                loader: productDetailLoader,
               },
               {
                 path: "edit",
@@ -102,16 +117,27 @@ const router = createBrowserRouter([
       },
       {
         path: "checkout",
-        element: <Checkout />,
+        element: (
+          <Suspense fallback={<p className="center">Loading...</p>}>
+            <Checkout />
+          </Suspense>
+        ),
         loader: checkAuthLoader,
       },
-      {
-        path: "order",
-        element: <PlaceOrder />,
-        loader: getProductLoader,
-      },
+
       { path: "logout", action: logoutAction },
-      { path: "orders", element: <UserOrders />, loader: userOrdersLoader },
+      {
+        path: "orders",
+        element: (
+          <Suspense fallback={<p className="center">Loading</p>}>
+            <UserOrders />
+          </Suspense>
+        ),
+        loader: () =>
+          import("./components/User/UserOrder").then((module) =>
+            module.loader()
+          ),
+      },
 
       {
         path: "admin",
@@ -120,8 +146,15 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <GetAllUsers />,
-            loader: allUserDetailLoader,
+            element: (
+              <Suspense fallback={<p className="center">Loading...</p>}>
+                <GetAllUsers />
+              </Suspense>
+            ),
+            loader: () =>
+              import("./components/Admin/GetAllUsers").then((module) =>
+                module.loader()
+              ),
           },
           { path: "add", element: <AddProducts /> },
           {
