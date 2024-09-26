@@ -84,11 +84,11 @@ async function sendOTP(req, res, next) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // await client.messages.create({
-    //   body: `Your OTP is: ${otp}`,
-    //   from: process.env.TWILIO_PHONE_NUMBER,
-    //   to: `+91${phoneNumber}`,
-    // });
+    await client.messages.create({
+      body: `Your OTP is: ${otp}`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: `+91${phoneNumber}`,
+    });
 
     res.status(200).json({ message: "OTP sent successfully", otp });
   } catch (err) {
