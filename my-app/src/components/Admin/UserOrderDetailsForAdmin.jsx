@@ -6,7 +6,7 @@ export default function UserOrderDetailsForAdmin() {
     const data = useLoaderData()
     const order = data && data.order
 
-    console.log(order)
+
 
     return <>
         <div>
@@ -18,7 +18,7 @@ export default function UserOrderDetailsForAdmin() {
 
 export async function loader({ req, params }) {
     const orderId = params.id
-    console.log(orderId)
+    
 
     try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/admin/${orderId}`)

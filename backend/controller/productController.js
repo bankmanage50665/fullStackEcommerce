@@ -15,7 +15,7 @@ async function createProduct(req, res, next) {
 
   const { name, description, brand, category, price, creator } = req.body;
 
-  console.log(req.userData);
+  console.log(name, description, brand, category, price, creator);
 
   const createdProduct = new Product({
     name,
@@ -126,30 +126,19 @@ async function deleteProducts(req, res, next) {
     );
   }
 
-  console.log(product);
-
-  // const user = await User.findById(product.creator);
-
-  // console.log(user);
-
-   product.image.forEach((file) =>
+  product.image.forEach((file) =>
     fs.unlink(file, (err) => {
-       console.log(err);
-     })
-   );
+      console.log(err);
+    })
+  );
 
   try {
-  
-
     await product.deleteOne();
   } catch (err) {
     return next(new HttpError("Field to delete product", 500));
   }
 
   res.json({ message: "Product delete sucessfully" });
-
-
-  
 }
 module.exports = {
   createProduct,

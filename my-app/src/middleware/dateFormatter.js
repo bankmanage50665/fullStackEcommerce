@@ -6,11 +6,3 @@ export function currentDate() {
   const formattedDate = `${day}-${month}-${year}`;
   return formattedDate;
 }
-
-export function futureDate(futureDay) {
-  const currentDate = new Date();
-  let futureDate = new Date(currentDate); // Create a copy of the current date
-  futureDate.setDate(currentDate.getDate() + futureDay);
-
-  return futureDate;
-}

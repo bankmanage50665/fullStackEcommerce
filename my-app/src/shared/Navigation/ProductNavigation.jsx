@@ -1,76 +1,65 @@
 import { NavLink, useRouteLoaderData } from "react-router-dom";
+import { motion } from 'framer-motion';
+
+
 
 export default function ProductsNavigation() {
-  const token = useRouteLoaderData("token");
+  const token = useRouteLoaderData("root");
   return (
     <>
-      <header>
-        <ul>
-          <nav className="flex ">
-            <li className=" mt-4  py-1 rounded-md mx-2 text-black font-semibold">
-              <NavLink
-                to=""
-                style={({ isActive }) =>
-                  isActive
-                    ? {
-                        color: "white",
-                        backgroundColor: "black",
-                        padding: "3px 5px",
-                        borderRadius: "5px",
-                        boxShadow: "2px 2px 2px",
-                      }
-                    : null
-                }
-                end
-              >
-                All products
-              </NavLink>
-            </li>
+      <header className="bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg">
+        <nav className="container mx-auto px-4 py-3">
+          <ul className="flex items-center justify-center space-x-6">
+            <NavItem to="" end>
+              All Products
+            </NavItem>
             {token && (
-              <li className=" mt-4  py-1 rounded-md mx-2 text-black font-semibold">
-                <NavLink
-                  to="add"
-                  style={({ isActive }) =>
-                    isActive
-                      ? {
-                          color: "white",
-                          backgroundColor: "black",
-                          padding: "3px 5px",
-                          borderRadius: "5px",
-                          boxShadow: "2px 2px 2px",
-                        }
-                      : null
-                  }
-                  end
-                >
-                  Add products
-                </NavLink>
-              </li>
+              <>
+                <NavItem to="add" end>
+                  Add Products
+                </NavItem>
+                <NavItem to=":id/edit" end>
+                  Edit Products
+                </NavItem>
+              </>
             )}
-            {token && (
-              <li className=" mt-4  py-1 rounded-md mx-2 text-black font-semibold">
-                <NavLink
-                  to=":id/edit"
-                  style={({ isActive }) =>
-                    isActive
-                      ? {
-                          color: "white",
-                          backgroundColor: "black",
-                          padding: "3px 5px",
-                          borderRadius: "5px",
-                          boxShadow: "2px 2px 2px",
-                        }
-                      : null
-                  }
-                  end
-                >
-                  Edit products
-                </NavLink>
-              </li>
-            )}
-          </nav>
-        </ul>
+          </ul>
+        </nav>
       </header>
+      );
+};
+
+      const NavItem = ({to, children, end}) => (
+      <motion.li
+        className="relative"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <NavLink
+          to={to}
+          className={({ isActive }) =>
+            `px-4 py-2 rounded-full font-bold transition-all duration-300 ${isActive
+              ? 'bg-white text-blue-600 shadow-md'
+              : 'text-white hover:bg-white/20'
+            }`
+          }
+          end={end}
+        >
+          {({ isActive }) => (
+            <>
+              {children}
+              {isActive && (
+                <motion.span
+                  className="absolute -bottom-2 left-1/2 w-2 h-2 bg-yellow-300 rounded-full"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              )}
+            </>
+          )}
+        </NavLink>
+      </motion.li>
     </>
   );
 }

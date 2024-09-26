@@ -3,8 +3,10 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true },
-  password: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
+  otp: { type: String, required: false },
+  otpExpiration: { type: Date, required: false },
+
   products: [{ type: mongoose.Types.ObjectId, required: true, ref: "Product" }],
   orders: [{ type: mongoose.Types.ObjectId, ref: "Order" }],
 });

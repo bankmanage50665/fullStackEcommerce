@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { NavLink } from "react-router-dom";
+import { NavLink, useRouteLoaderData } from "react-router-dom";
 
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { MdOutlineShoppingBag } from "react-icons/md";
@@ -8,14 +8,14 @@ import { SiGnuprivacyguard } from "react-icons/si";
 
 
 import CartContext from '../../context/CartContext';
-import { getToken } from '../../middleware/getToken';
+
 
 
 export default function Footer() {
     const { items } = useContext(CartContext)
-    const token = getToken()
 
-    console.log(token)
+    const token = useRouteLoaderData("root")
+
 
 
 
@@ -40,7 +40,7 @@ export default function Footer() {
                     <span className="text-xs">Shop</span>
                 </NavLink>
 
-              
+
 
 
                 <NavLink
@@ -65,7 +65,7 @@ export default function Footer() {
                 </NavLink>
 
 
-                <NavLink
+                {token && <NavLink
                     to="orders"
                     className={({ isActive }) =>
                         `flex flex-col items-center px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-luxury-gold text-black hover:text-black ${isActive
@@ -77,7 +77,7 @@ export default function Footer() {
                 >
                     <FaRegUserCircle className="h-5 w-5 mb-1" />
                     <span className="text-xs">Orders</span>
-                </NavLink>
+                </NavLink>}
 
                 {!token && <NavLink
                     to="signup"

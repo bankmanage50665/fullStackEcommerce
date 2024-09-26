@@ -1,23 +1,32 @@
 import {
   Form,
+  json,
   useNavigate,
   useNavigation,
   useRouteLoaderData,
 } from "react-router-dom";
 import { useState } from "react";
+import { motion } from 'framer-motion';
+import { FaProductHunt, FaDollarSign, FaTag, FaThList, FaUpload } from 'react-icons/fa';
+
+
+
+
+
 import ImageUpload from "../../shared/ImageUpload";
 import { userId } from "../../middleware/getToken"
+
+
 
 export default function Signup() {
   const [files, setFiles] = useState([]);
   const navigation = useNavigation();
   const isSubmiting = navigation.state === "submitting";
   const navigate = useNavigate();
-  const token = useRouteLoaderData("token");
+  const token = useRouteLoaderData("root")
   const userid = userId()
 
 
-  console.log(userid)
 
   function handleGetImg(img) {
     setFiles(img);
@@ -42,19 +51,26 @@ export default function Signup() {
       formData.append("creator", userid)
       files.forEach((files) => formData.append("image", files));
 
+     
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/products/add`, {
         method: "POST",
         body: formData,
         headers: {
-          Authorization: `Bearer ${token}`, // Include the authentication token
+
+          Authorization: "Bearer " + token,
         },
 
       });
       const resData = await res.json();
-      console.log(resData);
 
 
-    } catch (err) { }
+      if (!res.ok) {
+        throw new Error(resData.message)
+      }
+
+    } catch (err) {
+      throw json({ message: "Field to add new product, Please try again later." }, { status: 500 })
+    }
 
 
 
@@ -64,98 +80,129 @@ export default function Signup() {
 
   return (
     <>
-      <Form
-        onSubmit={submitForm}
-        className="w-auto h-auto p-6 bg-stone-200  mt-6 m-auto rounded-md shadow-xl"
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-lg w-full mx-auto mt-10 bg-gradient-to-br from-purple-50 to-indigo-100 p-8 rounded-lg shadow-2xl"
       >
-        <div>
-          <label
-            htmlFor="name"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
-          >
-            Product  Name
-          </label>
-          <input
-            name="name"
-            type="text"
-            id="name"
-            required
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="description"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
-          >
-            Description
-          </label>
-          <input
-            name="description"
-            type="text"
-            id="description"
-            required
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-          />
-        </div>
+        <Form onSubmit={submitForm} className="space-y-6">
+          {/* Product Name */}
+          <div className="relative">
+            <label
+              htmlFor="name"
+              className="block mb-2 text-lg font-semibold text-gray-800"
+            >
+              <FaProductHunt className="inline mr-2 text-indigo-500" />
+              Product Name
+            </label>
+            <input
+              name="name"
+              type="text"
+              id="name"
+              required
+              className="w-full p-3 rounded-lg shadow-sm border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
 
-        <div>
-          <label
-            htmlFor="price"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
-          >
-            price
-          </label>
-          <input
-            name="price"
-            type="number"
-            id="price"
-            required
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="brand"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
-          >
-            brand
-          </label>
-          <input
-            name="brand"
-            type="text"
-            id="brand"
-            required
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-          />
-        </div>
+          {/* Description */}
+          <div className="relative">
+            <label
+              htmlFor="description"
+              className="block mb-2 text-lg font-semibold text-gray-800"
+            >
+              <FaTag className="inline mr-2 text-indigo-500" />
+              Description
+            </label>
+            <input
+              name="description"
+              type="text"
+              id="description"
+              required
+              className="w-full p-3 rounded-lg shadow-sm border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
 
-        <div>
-          <label
-            htmlFor="category"
-            className="block items-center mb-2 text-center font-semibold text-slate-950"
-          >
-            category
-          </label>
-          <input
-            name="category"
-            type="text"
-            id="category"
-            required
-            className="block items-center w-full rounded-md p-1 mb-4 focus:border-indigo-500"
-          />
-        </div>
-        <ImageUpload onChangeImages={handleGetImg} />
+          {/* Price */}
+          <div className="relative">
+            <label
+              htmlFor="price"
+              className="block mb-2 text-lg font-semibold text-gray-800"
+            >
+              <FaDollarSign className="inline mr-2 text-indigo-500" />
+              Price
+            </label>
+            <input
+              name="price"
+              type="number"
+              id="price"
+              required
+              className="w-full p-3 rounded-lg shadow-sm border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
 
-        <div className="mb-20">
-          <button
-            disabled={isSubmiting}
-            className="px-4 py-1 bg-stone-400 rounded-md hover:font-bold hover:bg-stone-950 hover:text-white"
-          >
-            {isSubmiting ? "Submiting" : "Submit"}
-          </button>
-        </div>
-      </Form>
+          {/* Brand */}
+          <div className="relative">
+            <label
+              htmlFor="brand"
+              className="block mb-2 text-lg font-semibold text-gray-800"
+            >
+              <FaThList className="inline mr-2 text-indigo-500" />
+              Brand
+            </label>
+            <input
+              name="brand"
+              type="text"
+              id="brand"
+              required
+              className="w-full p-3 rounded-lg shadow-sm border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+
+          {/* Category */}
+          <div className="relative">
+            <label
+              htmlFor="category"
+              className="block mb-2 text-lg font-semibold text-gray-800"
+            >
+              <FaThList className="inline mr-2 text-indigo-500" />
+              Category
+            </label>
+            <input
+              name="category"
+              type="text"
+              id="category"
+              required
+              className="w-full p-3 rounded-lg shadow-sm border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div className="relative">
+            <label
+              htmlFor="imageUpload"
+              className="block mb-2 text-lg font-semibold text-gray-800"
+            >
+              <FaUpload className="inline mr-2 text-indigo-500" />
+              Upload Images
+            </label>
+            <ImageUpload onChangeImages={handleGetImg} />
+          </div>
+
+          {/* Submit Button */}
+          <div className="mt-8">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              disabled={isSubmiting}
+              className={`w-full py-3 rounded-lg font-semibold text-white transition-all duration-300 ${isSubmiting ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
+                }`}
+            >
+              {isSubmiting ? 'Submitting...' : 'Submit'}
+            </motion.button>
+          </div>
+        </Form>
+      </motion.div>
     </>
   );
 }

@@ -1,35 +1,37 @@
 import React, { lazy } from "react";
 import { Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import "./App.css";
 
 import { CartContextProvider } from "./context/CartContext";
-
-import { action as logoutAction } from "./middleware/logout";
 import RootLayout from "./shared/Navigation/RootLayout";
 import ProductItem, {
   loader as productDetailLoader,
 } from "./components/Product/ProductItem";
 import EditProducts from "./components/Product/EditProducts";
-
-import {
-  loader as getTokenLoader,
-  checkAuthLoader,
-} from "./middleware/getToken";
-
+import { tokenLoader, checkAuthLoader } from "./middleware/getToken";
 import UserOrderDetailsForAdmin, {
   loader as userOrderDetailsForAdminLoader,
 } from "./components/Admin/UserOrderDetailsForAdmin";
 import AdminLayout from "./components/Admin/shared/Navigation/AdminLayout";
 import Error from "./shared/component/Error";
+import { action as logoutAction } from "./middleware/logout";
+import { loginWithOtpAction } from "./components/LoginWithOtp";
+import { SignupWithOtpAction } from "./components/SignupWithOtp";
+import Loading from "./shared/component/Loading";
 
-const Signup = React.lazy(() => import("./components/Signup"));
-const Login = React.lazy(() => import("./components/Login"));
+
+
+const SignupWithOtp = React.lazy(() => import("./components/SignupWithOtp"));
+const LoginWithOtp = React.lazy(() => import("./components/LoginWithOtp"));
 const Cart = React.lazy(() => import("./components/User/Cart"));
 const AddProducts = React.lazy(() =>
   import("./components/Product/AddProducts")
 );
-
 const Products = lazy(() => import("./components/Product/Products"));
 const UserOrders = lazy(() => import("./components/User/UserOrder"));
 const GetAllUsers = lazy(() => import("./components/Admin/GetAllUsers"));
@@ -40,38 +42,33 @@ const router = createBrowserRouter([
     path: "",
     element: <RootLayout />,
     errorElement: <Error />,
-    loader: getTokenLoader,
-    id: "token",
+    id: "root",
+    loader: tokenLoader,
     children: [
       {
         index: true,
-        element: (
-          <Suspense fallback={<div className="center">Loading...</div>}>
-            <Products />
-          </Suspense>
-        ),
-        loader: () =>
-          import("./components/Product/Products").then((module) =>
-            module.loader()
-          ),
+        element: <Navigate to="products" replace={true} />,
       },
       {
         path: "signup",
         element: (
-          <Suspense fallback={<p>Loading...</p>}>
-            <Signup />
+          <Suspense fallback={<Loading />}>
+            <SignupWithOtp />
           </Suspense>
         ),
+        action: SignupWithOtpAction,
       },
 
       {
         path: "login",
         element: (
-          <Suspense fallback={<p>Loading...</p>}>
-            <Login />
+          <Suspense fallback={<Loading />}>
+            <LoginWithOtp />
           </Suspense>
         ),
+        action: loginWithOtpAction,
       },
+
       {
         path: "products",
 
@@ -79,7 +76,7 @@ const router = createBrowserRouter([
           {
             index: true,
             element: (
-              <Suspense fallback={<div className="center">Loading...</div>}>
+              <Suspense fallback={<Loading />}>
                 <Products />
               </Suspense>
             ),
@@ -91,7 +88,7 @@ const router = createBrowserRouter([
           {
             path: "cart",
             element: (
-              <Suspense fallback={<p>Loading...</p>}>
+              <Suspense fallback={<Loading />}>
                 <Cart />
               </Suspense>
             ),
@@ -99,8 +96,7 @@ const router = createBrowserRouter([
 
           {
             path: ":id",
-            loader: productDetailLoader,
-            id: "product",
+
             children: [
               {
                 index: true,
@@ -110,6 +106,7 @@ const router = createBrowserRouter([
               {
                 path: "edit",
                 element: <EditProducts />,
+                loader: productDetailLoader,
               },
             ],
           },
@@ -118,25 +115,21 @@ const router = createBrowserRouter([
       {
         path: "checkout",
         element: (
-          <Suspense fallback={<p className="center">Loading...</p>}>
+          <Suspense fallback={<Loading />}>
             <Checkout />
           </Suspense>
         ),
         loader: checkAuthLoader,
       },
 
-      { path: "logout", action: logoutAction },
       {
         path: "orders",
         element: (
-          <Suspense fallback={<p className="center">Loading</p>}>
+          <Suspense fallback={<Loading />}>
             <UserOrders />
           </Suspense>
         ),
-        loader: () =>
-          import("./components/User/UserOrder").then((module) =>
-            module.loader()
-          ),
+        loader: checkAuthLoader,
       },
 
       {
@@ -147,7 +140,7 @@ const router = createBrowserRouter([
           {
             index: true,
             element: (
-              <Suspense fallback={<p className="center">Loading...</p>}>
+              <Suspense fallback={<Loading />}>
                 <GetAllUsers />
               </Suspense>
             ),
@@ -156,7 +149,14 @@ const router = createBrowserRouter([
                 module.loader()
               ),
           },
-          { path: "add", element: <AddProducts /> },
+          {
+            path: "add",
+            element: (
+              <Suspense fallback={<Loading />}>
+                <AddProducts />
+              </Suspense>
+            ),
+          },
           {
             path: ":id",
             children: [
@@ -169,6 +169,7 @@ const router = createBrowserRouter([
           },
         ],
       },
+      { path: "logout", action: logoutAction },
     ],
   },
 ]);

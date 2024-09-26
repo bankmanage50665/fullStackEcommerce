@@ -7,7 +7,7 @@ const path = require("path");
 
 const cors = require("cors");
 const fs = require("fs");
-
+const session = require("express-session");
 
 const userRouter = require("./routes/user/user_routes");
 const HttpError = require("./utils/errorModal");
@@ -18,13 +18,22 @@ const adminRouter = require("./routes/user/admin_routes");
 const url = `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_USER_PASSWORD}@cluster0.wdrbduw.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`;
 
 app.use(bodyParser.json());
+app.use(express.json());
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:65017", // Replace with your frontend's URL
-//     credentials: true,
-//   })
-// );
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(
+  cors({
+    origin: "https://ecommerce50665.web.app", // Replace with your frontend's URL
+    credentials: true,
+  })
+);
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*"),
@@ -57,12 +66,7 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
   if (req.file) {
-    fs.unlink(
-      req.files.forEach((file) => file.path),
-      (err) => {
-        console.log(err);
-      }
-    );
+    fs.unlink(req.files.forEach((file) => file.path));
   }
 
   if (res.headerSent) {
@@ -74,7 +78,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
 mongoose
   .connect(url)

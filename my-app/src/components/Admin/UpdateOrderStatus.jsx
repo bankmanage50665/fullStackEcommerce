@@ -1,11 +1,11 @@
-import { useNavigate, json,  useParams } from "react-router-dom"
+import { useNavigate, json, useParams, useRouteLoaderData } from "react-router-dom"
 import { useState } from "react"
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { motion } from 'framer-motion';
 
-import { getToken } from "../../middleware/getToken"
 
 
-export default function UpdateOrderStatus({ order }) {
+export default function UpdateOrderStatus() {
 
 
 
@@ -17,15 +17,14 @@ export default function UpdateOrderStatus({ order }) {
 
 
 
-
     const params = useParams()
+    const token = useRouteLoaderData("root")
 
 
 
     const orderId = params.id
 
     const navigate = useNavigate()
-    const token = getToken()
 
 
 
@@ -47,14 +46,14 @@ export default function UpdateOrderStatus({ order }) {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({ orderStatus: orderStatus, paymentStatus: paymentStatus, deliveredWillBe: deliveryDate })
             })
 
             const resData = await response.json()
 
-            
+
 
             if (!response.ok) {
                 throw new Error(resData.message || "Field to update order status.")
@@ -88,7 +87,7 @@ export default function UpdateOrderStatus({ order }) {
 
             const resData = await response.json()
 
-            console.log(resData)
+
 
             if (!response.ok) {
                 throw new Error(resData.message || "Field to delete order .")
@@ -107,42 +106,47 @@ export default function UpdateOrderStatus({ order }) {
 
 
     return <>
-       
 
-        <div className="p-4 bg-white shadow-md rounded-lg">
-            <div className="mb-4">
-                <label htmlFor="deliveryStatus" className="block text-gray-700 font-medium">
+
+        <motion.div
+            className="p-6 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200 shadow-lg rounded-lg"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <div className="mb-6">
+                <label htmlFor="deliveryStatus" className="block text-lg font-semibold text-gray-800">
                     Update Order Delivery Status
                 </label>
                 <select
                     name="deliveryStatus"
                     onChange={handleOnChangeUpdateStatus}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-2 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 >
                     <option value="">Select status</option>
-                    <option value="dispatch">Dispatch</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="pending">Pending</option>
+                    <option value="Dispatch">Dispatch</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Pending">Pending</option>
                 </select>
             </div>
 
-            <div className="mb-4">
-                <label htmlFor="paymentStatus" className="block text-gray-700 font-medium">
+            <div className="mb-6">
+                <label htmlFor="paymentStatus" className="block text-lg font-semibold text-gray-800">
                     Update Order Payment Status
                 </label>
                 <select
                     name="paymentStatus"
                     onChange={(e) => setPaymentStatus(e.target.value)}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-2 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 >
                     <option value="">Select Payment status</option>
-                    <option value="paid">Paid</option>
-                    <option value="unpaid">Unpaid</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Unpaid">Unpaid</option>
                 </select>
             </div>
 
-            <div className="mb-4">
-                <label htmlFor="deliveredWillBe" className="block text-gray-700 font-medium">
+            <div className="mb-6">
+                <label htmlFor="deliveredWillBe" className="block text-lg font-semibold text-gray-800">
                     Update Order Delivery Date
                 </label>
                 <input
@@ -150,33 +154,37 @@ export default function UpdateOrderStatus({ order }) {
                     id="deliveredWillBe"
                     name="deliveredWillBe"
                     onChange={(e) => setDeliveryDate(e.target.value)}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-2 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 />
             </div>
 
-            <div className="flex space-x-4">
-                <button
+            <div className="flex space-x-4 mt-8">
+                <motion.button
                     disabled={isDeleteing}
                     onClick={handleDeleteOrder}
-                    className={`flex items-center px-4 py-2 rounded-md text-white ${isDeleteing
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-red-600 hover:bg-red-700 focus:outline-none focus:bg-red-800'
+                    whileHover={{ scale: isDeleteing ? 1 : 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`flex items-center justify-center px-5 py-3 rounded-md text-white font-medium transition-all ${isDeleteing
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-red-600 hover:bg-red-700 focus:bg-red-800'
                         }`}
                 >
-                    {isDeleteing ? 'Deleting...' : <><FiTrash2 className="mr-2" />Delete Order</>}
-                </button>
+                    {isDeleteing ? 'Deleting...' : <><FiTrash2 className="mr-2" /> Delete Order</>}
+                </motion.button>
 
-                <button
+                <motion.button
                     disabled={isUpdating}
                     onClick={handleUpdateOrderStatus}
-                    className={`flex items-center px-4 py-2 rounded-md text-white ${isUpdating
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-blue-800'
+                    whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`flex items-center justify-center px-5 py-3 rounded-md text-white font-medium transition-all ${isUpdating
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-blue-600 hover:bg-blue-700 focus:bg-blue-800'
                         }`}
                 >
-                    {isUpdating ? 'Updating...' : <><FiEdit className="mr-2" />Update</>}
-                </button>
+                    {isUpdating ? 'Updating...' : <><FiEdit className="mr-2" /> Update</>}
+                </motion.button>
             </div>
-        </div>
+        </motion.div>
     </>
 }

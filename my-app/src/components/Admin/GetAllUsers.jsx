@@ -1,7 +1,9 @@
 import { json, useLoaderData } from "react-router-dom"
+import { motion } from 'framer-motion';
+
+
 
 import RenderAllUsers from "./RenderAllUsers"
-import { getToken, userId } from "../../middleware/getToken"
 
 
 
@@ -9,14 +11,26 @@ export default function GetAllUsers() {
     const data = useLoaderData()
     const users = data && data.users
 
-    console.log(data)
+
 
     return <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-6 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200 shadow-lg rounded-lg"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+        >
             {users.map((user, index) => (
-                <RenderAllUsers key={index} user={user} />
+                <motion.div
+                    key={index}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300"
+                >
+                    <RenderAllUsers user={user} />
+                </motion.div>
             ))}
-        </div>
+        </motion.div>
     </>
 }
 

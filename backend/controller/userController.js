@@ -1,120 +1,161 @@
-const bcrypt = require("bcryptjs");
+const twilio = require("twilio");
+const OTPGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
-const User = require("../modal/user_modal");
-const {  validationResult } = require("express-validator");
-const HttpError = require("../utils/errorModal");
+const { validationResult } = require("express-validator");
 
-async function signup(req, res, next) {
+const HttpError = require("../utils/errorModal");
+const User = require("../modal/user_modal");
+
+const client = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
+
+async function register(req, res, next) {
   const errors = validationResult(req);
-  if (!errors.isEmpty) {
+  if (!errors.isEmpty()) {
     return next(new HttpError("Invalid user credentials", 401));
   }
 
-  const { name, email, password } = req.body;
+  const { phoneNumber, name } = req.body;
 
-
-
-  let hashedPassword;
-
+  let user;
+  // Check if user already exists
   try {
-    hashedPassword = await bcrypt.hash(password, 12);
+    user = await User.findOne({ phoneNumber });
   } catch (err) {
     return next(
-      new HttpError(
-        "Field to hashed user password, Please try again later.",
-        401
-      )
+      new HttpError("Field to find user, Please try again later.", 401)
     );
   }
 
-  const createdUser = new User({
-    name,
-    email,
-    password: hashedPassword,
-    orders: [],
-    products: []
-   
-  });
-  try {
-    await createdUser.save();
-  } catch (err) {
-    return next(
-      new HttpError("Field to created user, Please try again later.", 401)
-    );
+  if (user) {
+    return next(new HttpError("User exist already", 401));
   }
-  let token;
+
+  // Create new user
+  user = new User({ phoneNumber, name, orders: [], products: [] });
+
   try {
-    token = jwt.sign(
-      { userId: createdUser.id, email: createdUser.email },
-      process.env.JWT_KEY,
-      { expiresIn: "3d" }
-    );
+    await user.save();
   } catch (err) {
     return next(
-      new HttpError("Field to create token, Please try again later.", 500)
+      new HttpError("Field to create new  user, Please try again later.", 401)
     );
   }
 
-  return res.status(201).json({
-    userId: createdUser.id,
-    email: createdUser.email,
-    token,
-    createdUser,
+  res.status(201).json({
+    message: "User registered successfully",
+
+    userId: user.id,
   });
 }
 
-async function login(req, res, next) {
-  const error = validationResult(req);
-  if (!error.isEmpty()) {
+async function sendOTP(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
     return next(new HttpError("Invalid user credentials", 401));
   }
 
-  const { email, password } = req.body;
-
-  let findUser = false;
   try {
-    findUser = await User.findOne({ email });
+    const { phoneNumber } = req.body;
+
+    const otp = OTPGenerator.generate(4, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    console.log(otp);
+
+    const user = await User.findOneAndUpdate(
+      { phoneNumber },
+
+      {
+        otp,
+        otpExpiration: new Date(Date.now() + 5 * 60 * 1000), // OTP expires in 5 minutes
+      },
+      { new: true, upsert: true } // Create a new user if not found
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await client.messages.create({
+      body: `Your OTP is: ${otp}`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: `+91${phoneNumber}`,
+    });
+
+    res.status(200).json({ message: "OTP sent successfully", otp });
   } catch (err) {
-    return next(new HttpError("Field to login, Please try again later.", 401));
+    return next(
+      new HttpError("Field to send otp, Please try agin later.", 500)
+    );
+  }
+}
+
+async function verifyOtp(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new HttpError("Invalid user credentials", 401));
   }
 
-  if (!findUser) {
+  const { phoneNumber, otp } = req.body;
+
+  let user;
+  try {
+    user = await User.findOne({ phoneNumber });
+  } catch (err) {
     return next(
       new HttpError(
-        "Couldn't find user with that email, Please first create account.",
+        "Failed to find user with phone number, Please try again later.",
         500
       )
     );
   }
 
-  let comparePassword;
+  if (!user) {
+    return next(new HttpError("User not found, Please register first", 404));
+  }
+
+  if (user.otp !== otp) {
+    return next(new HttpError("Invalid OTP", 404));
+  }
+
+  if (user.otpExpiration < new Date()) {
+    return next(new HttpError("OTP has expired", 404));
+  }
+
+  // Only update fields you need to change
+  user.otp = undefined;
+  user.otpExpiration = undefined;
+
+  // Log the entire user object before saving
+
   try {
-    comparePassword = await bcrypt.compare(findUser.password, password);
+    await user.save();
   } catch (err) {
+    console.error("Error while saving user:", err); // Log the error
     return next(
-      new HttpError("Field to varify user, User credintial wrong.", 500)
+      new HttpError(
+        "Failed to reset user OTP and OTP expiration, Please try again later.",
+        500
+      )
     );
   }
 
-  let token;
-  try {
-    token = jwt.sign(
-      { userId: findUser.id, email: findUser.email },
-      process.env.JWT_KEY,
-      {
-        expiresIn: "3d",
-      }
-    );
-  } catch (err) {
-    new HttpError("Field to create token, Please try again later.", 500);
-  }
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_KEY, {
+    expiresIn: "10h",
+  });
 
-  res.json({
-    message: "User login sucessfully.",
-    userId: findUser.id,
-    email: findUser.email,
+  res.status(200).json({
     token,
+    userId: user._id,
+    phoneNumber,
+    message: "OTP verified successfully",
   });
 }
 
-module.exports = { signup, login };
+module.exports = { register, sendOTP, verifyOtp };

@@ -1,21 +1,26 @@
 import { redirect } from "react-router-dom";
 
-export function userId(req, res, next) {
-  const userId = localStorage.getItem("userId");
+export function userId() {
+  const userId = localStorage.getItem("userid");
   return userId;
 }
 
-export function getToken(req, res, next) {
+export function getToken() {
   const token = localStorage.getItem("token");
   return token;
 }
 
-export function getCreatorId(req, res, next) {
+export function getCreatorId() {
   const creatorid = localStorage.getItem("creatorid");
   return creatorid;
 }
 
-export function loader() {
+export function getUserUserPhoneNumber(){
+  const userPhoneNumber = localStorage.getItem("userPhoneNumber")
+  return userPhoneNumber
+}
+
+export function tokenLoader() {
   return getToken();
 }
 

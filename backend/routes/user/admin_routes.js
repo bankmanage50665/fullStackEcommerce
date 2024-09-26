@@ -4,6 +4,8 @@ const authCheck = require("../../middleware/authCheck");
 
 const adminController = require("../../controller/admin_controller");
 
+
+
 router.get("/allUsers", adminController.getAllUsers);
 router.get("/:orderId", adminController.getOrderByOrderId);
 

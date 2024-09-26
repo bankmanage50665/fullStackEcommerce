@@ -4,7 +4,7 @@ export default function PlaceOrder() {
   const data = useLoaderData();
   const { orders } = data;
 
-  console.log(orders)
+
   return (
     <>
       (

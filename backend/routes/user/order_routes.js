@@ -9,7 +9,11 @@ router.get("/:id", orderController.userOrderByUserId);
 
 
 router.use(authCheck)
+
+
 router.post("/place", orderController.placeOrder);
+
+
 router.patch("/:id", orderController.updateOrder)
 router.delete("/:id", orderController.deleteOrder)
 

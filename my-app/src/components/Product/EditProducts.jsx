@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   Form,
   json,
+  useLoaderData,
   useNavigate,
   useParams,
   useRouteLoaderData,
@@ -13,8 +14,8 @@ export default function EditProducts() {
   const [isDeleting, setIsDeleting] = useState(false)
 
 
-  const product = useRouteLoaderData("product");
-  const token = useRouteLoaderData("token");
+  const product = useLoaderData()
+  const token = useRouteLoaderData("root");
   const navigate = useNavigate();
   const findProduct = product.findProduct;
   const sp = useParams().id;
@@ -37,7 +38,7 @@ export default function EditProducts() {
         },
       });
       const data = await response.json();
-      console.log(data);
+     
 
       if (!response.ok) {
         throw new Error(data.message)
@@ -120,6 +121,21 @@ export default function EditProducts() {
             id="description"
             className="block w-full rounded-md p-2 mb-4 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
             defaultValue={findProduct ? findProduct.description : null}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="price"
+            className="block mb-2 text-lg font-semibold text-gray-800"
+          >
+            Price
+          </label>
+          <input
+            name="price"
+            type="text"
+            id="price"
+            className="block w-full rounded-md p-2 mb-4 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+            defaultValue={findProduct ? findProduct.price : null}
           />
         </div>
 

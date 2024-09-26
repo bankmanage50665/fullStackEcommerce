@@ -5,7 +5,13 @@ const HttpError = require("../utils/errorModal");
 const User = require("../modal/user_modal");
 
 async function placeOrder(req, res, next) {
-  const { user, items, totalQuantity, totalPrice, deliveredWillBe } = req.body;
+  const { user, items, totalQuantity, totalPrice } = req.body;
+
+  let currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() + 3);
+  let deliveryDate = currentDate.toLocaleDateString("en-GB");
+
+ 
 
   const createdOrder = new Order({
     user,
@@ -14,7 +20,7 @@ async function placeOrder(req, res, next) {
     totalQuantity,
     totalPrice,
 
-    deliveredWillBe,
+    deliveredWillBe: deliveryDate,
     paymentStatus: "Unpaid",
     orderStatus: "Dispatch",
   });
@@ -65,16 +71,18 @@ async function userOrderByUserId(req, res, next) {
 
   let findOrderByUserId;
   try {
-    findOrderByUserId = await User.findById(userId);
+    findOrderByUserId = await User.findById(userId).populate("orders");
   } catch (err) {
     return next(
       new HttpError("Field to find user orders, Please try again later", 500)
     );
   }
 
+  console.log(findOrderByUserId)
+
   res.json({
     message: "Find user orders sucessfully.",
-    orders: findOrderByUserId,
+    orders: findOrderByUserId.toObject({ getters: true }),
   });
 }
 
@@ -96,17 +104,17 @@ async function updateOrder(req, res, next) {
     );
   }
 
-  const orderCreatorId = findOrderByIdForUpdate.creator.toString();
-  const userid = req.userData.userId;
+  // const orderCreatorId = findOrderByIdForUpdate.creator.toString();
+  // const userid = req.userData.userId;
 
-  if (userid !== orderCreatorId) {
-    return next(
-      new HttpError(
-        "Field to update order status, You'r not authorized to update this order status",
-        404
-      )
-    );
-  }
+  // if (userid !== orderCreatorId) {
+  //   return next(
+  //     new HttpError(
+  //       "Field to update order status, You'r not authorized to update this order status",
+  //       404
+  //     )
+  //   );
+  // }
 
   findOrderByIdForUpdate.orderStatus = orderStatus;
   findOrderByIdForUpdate.paymentStatus = paymentStatus;
@@ -163,20 +171,19 @@ async function deleteOrder(req, res, next) {
     return next(new HttpError("User not found.", 404));
   }
 
-  const orderCreatorId = order.creator.toString();
-  const userid = req.userData.userId;
+  // const orderCreatorId = order.creator.toString();
+  // const userid = req.userData.userId;
 
-  if (orderCreatorId !== userid) {
-    return next(
-      new HttpError("You are not authorized to delete this order.", 401)
-    );
-  }
+  // if (orderCreatorId !== userid) {
+  //   return next(
+  //     new HttpError("You are not authorized to delete this order.", 401)
+  //   );
+  // }
 
-
-  let session 
+  let session;
 
   try {
-     session = await mongoose.startSession();
+    session = await mongoose.startSession();
     session.startTransaction();
 
     await order.deleteOne({ session });
