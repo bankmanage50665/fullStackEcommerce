@@ -30,28 +30,12 @@ app.use(
 
 app.use(
   cors({
-    // origin: "https://ecommerce50665.web.app", // Replace with your frontend's URL
-    origin: "http://localhost:3001", // Replace with your frontend's URL
+    origin: ["https://ecommerce50665.web.app", "http://localhost:3001"], // Add both production and local URLs
     credentials: true,
   })
 );
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"),
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-    ),
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200); // End the request with a 200 status for preflight
-  }
 
-  next();
-});
 
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
