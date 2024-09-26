@@ -15,7 +15,6 @@ async function createProduct(req, res, next) {
 
   const { name, description, brand, category, price, creator } = req.body;
 
-  console.log(name, description, brand, category, price, creator);
 
   const createdProduct = new Product({
     name,

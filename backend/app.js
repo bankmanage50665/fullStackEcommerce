@@ -30,7 +30,8 @@ app.use(
 
 app.use(
   cors({
-    origin: "https://ecommerce50665.web.app", // Replace with your frontend's URL
+    // origin: "https://ecommerce50665.web.app", // Replace with your frontend's URL
+    origin: "http://localhost:3001", // Replace with your frontend's URL
     credentials: true,
   })
 );

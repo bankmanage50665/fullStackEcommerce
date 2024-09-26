@@ -78,7 +78,7 @@ async function userOrderByUserId(req, res, next) {
     );
   }
 
-  console.log(findOrderByUserId)
+ 
 
   res.json({
     message: "Find user orders sucessfully.",

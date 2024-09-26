@@ -44,6 +44,8 @@ async function register(req, res, next) {
     );
   }
 
+  
+
   res.status(201).json({
     message: "User registered successfully",
 
@@ -66,7 +68,7 @@ async function sendOTP(req, res, next) {
       specialChars: false,
     });
 
-    console.log(otp);
+    
 
     const user = await User.findOneAndUpdate(
       { phoneNumber },
@@ -82,11 +84,11 @@ async function sendOTP(req, res, next) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    await client.messages.create({
-      body: `Your OTP is: ${otp}`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: `+91${phoneNumber}`,
-    });
+    // await client.messages.create({
+    //   body: `Your OTP is: ${otp}`,
+    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   to: `+91${phoneNumber}`,
+    // });
 
     res.status(200).json({ message: "OTP sent successfully", otp });
   } catch (err) {
@@ -104,6 +106,8 @@ async function verifyOtp(req, res, next) {
 
   const { phoneNumber, otp } = req.body;
 
+  console.log(phoneNumber, otp)
+
   let user;
   try {
     user = await User.findOne({ phoneNumber });
@@ -115,6 +119,9 @@ async function verifyOtp(req, res, next) {
       )
     );
   }
+
+
+  
 
   if (!user) {
     return next(new HttpError("User not found, Please register first", 404));
